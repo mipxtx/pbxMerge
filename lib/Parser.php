@@ -19,25 +19,18 @@ class Parser
 {
     public function parse($fileName) {
 
-        $lines = explode("\n", trim(file_get_contents($fileName)));
-        $file = new File();
-        $block = [];
-        $name = "";
+        $text = file_get_contents($fileName);
 
-        for ($i = 0; $i < count($lines); $i++) {
-            $line = $lines[$i];
-            if (strpos($line, '/* Begin ') === 0) {
-                $block = [];
-                list($_, $_, $name) = explode(" ", $line);
-            } elseif (strpos($line, '/* End ') === 0) {
-                $text = implode("\n", $block);
-                echo "$name\n$text\n\n";
-                $file->addSection($this->parseSection($name, $text));
-            } else {
-                $block[] = $line;
-            }
-        }
+        echo $text;
+        $lines = explode("\n", trim($text));
 
+        $head = array_shift($lines);
+
+        $block = new WordIterator(implode("\n", $lines));
+
+        $file = new File($head);
+
+        $this->parseItems($file,$block);
         return $file;
     }
 
@@ -47,12 +40,7 @@ class Parser
      */
     public function parseList(WordIterator $block) {
         $list = new DefineStatements();
-        // {
-        $block->next();
         $this->parseItems($list, $block);
-        // }
-        $block->next();
-
         return $list;
     }
 
@@ -78,28 +66,43 @@ class Parser
         return $result;
     }
 
-    /**
-     * @param $name
-     * @param string $text
-     * @return Section
-     */
-    public function parseSection($name, $text) {
-
-        $block = new WordIterator($text);
-        $section = new Section($name);
-        $this->parseItems($section, $block);
-
-        return $section;
-    }
-
     public function parseItems(DefineStatements $container, WordIterator $block) {
+        // {
+        $block->next();
 
-        while ($block->current() != "}" && $block->valid()) {
+        $currentSection = null;
+        while ($block->current() != "}") {
+
+            if($block->current() == "/*"){
+                $coment = $this->parseComment($block);
+
+                if(preg_match('/Begin ([A-Za-z]+) section/',$coment, $out)){
+                    $currentSection = new Section($out[1]);
+                    $container->addItem($currentSection);
+                }
+
+                if(preg_match('/End ([A-Za-z]+) section/',$coment, $out)){
+                    $currentSection = null;
+                }
+            }
+
+            if($block->current() == "}"){
+                break;
+            }
+
             $item = $this->parseDefine($block);
-            $container->addItem($item);
+
+            if($currentSection == null){
+                $container->addItem($item);
+            }else{
+                $currentSection->addItem($item);
+            }
+
             // ;/,
             $block->next();
         }
+        // }
+        $block->next();
     }
 
     public function parseComment(WordIterator $block) {
@@ -122,6 +125,7 @@ class Parser
     public function parseDefine(WordIterator $block) {
         $key = $this->parseValue($block);
         if ($block->current() != "=") {
+            var_dump($key);
             $block->debug();
             throw new Exception('eq not found');
         }

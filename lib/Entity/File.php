@@ -8,20 +8,26 @@
 
 namespace PbxParser\Entity;
 
-class File
+class File extends DefineStatements
 {
-    private $sections = [];
+    private $heading;
 
-    public function addSection(Section $section) {
-        $this->sections[] = $section;
+    /**
+     * File constructor.
+     *
+     * @param $heading
+     */
+    public function __construct($heading) {
+        $this->heading = $heading;
     }
 
     /**
-     * @return Section[]
+     * @return mixed
      */
-    public function getSections(): array {
-        return $this->sections;
+    public function getHeading() {
+        return $this->heading;
     }
+
 
 
 }
