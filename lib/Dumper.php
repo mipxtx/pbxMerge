@@ -20,17 +20,21 @@ class Dumper
     private $level = 0;
 
     public function dump(File $file) {
-        $str = $file->getHeading();
+        $str = $file->getHeading()."\n";
         $str .= $this->dumpStatement($file);
 
         return $str;
     }
 
     public function dumpSection(Section $section) {
-        $ret = "\n/* Begin " . $section->getName() . " section */\n";
+        $ret = "\n\n/* Begin " . $section->getName() . " section */\n";
+        $out = [];
+
         foreach ($section->getItems() as $item) {
-            $ret .= $this->dumpDefineValue($item);
+            $out[] = rtrim($this->dumpDefineValue($item));
         }
+
+        $ret .= implode("\n", $out);
         $ret .= "\n/* End " . $section->getName() . " section */\n";
 
         return $ret;
@@ -45,9 +49,7 @@ class Dumper
         }
         $ret .= $this->dumpValue($define->getKey()) . " = " . $this->dumpDefineValue($define->getValue()) . "; ";
         if ($this->level < 3) {
-
-                $ret .= "\n";
-
+            $ret .= "\n";
         }
 
         return $ret;
@@ -73,8 +75,14 @@ class Dumper
         foreach ($ds->getItems() as $item) {
             $ret .= $this->dumpDefineValue($item);
         }
-        $ret .= "}";
         $this->level--;
+        if ($this->level < 2 && $ds->count()) {
+            for ($i = 0; $i < $this->level; $i++) {
+                $ret .= "\t";
+            }
+        }
+        $ret .= "}";
+
 
         return $ret;
     }

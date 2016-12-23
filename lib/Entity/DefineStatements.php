@@ -28,4 +28,8 @@ class DefineStatements implements DefineValue
     public function getItems(): array {
         return $this->items;
     }
+
+    public function count(){
+        return count($this->items);
+    }
 }
