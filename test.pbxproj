@@ -6,44 +6,42 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXProject section */
-		21E6826B7899581F58752B168580AE41 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				LastSwiftUpdateCheck = 0820;
-				LastUpgradeCheck = 0820;
-				ORGANIZATIONNAME = "Denis Kirillov";
-				TargetAttributes = {
-					161EFD281DA903F3B70FEDAAD80E0209 = {
-						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = 2XS5VLSBUW;
-						ProvisioningStyle = Automatic;
-					};
-					69215437C48110917D533D57830D8F6E = {
-						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = 2XS5VLSBUW;
-						ProvisioningStyle = Automatic;
-					};
-				};
-			};
-			buildConfigurationList = 13AD92F7A855A8251635807D6C65239B /* Build configuration list for PBXProject "PBXMergeTest" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				Base,
+/* Begin PBXNativeTarget section */
+		161EFD281DA903F3B70FEDAAD80E0209 /* PBXMergeTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6FBCDAB1F44DE3910ABC16BDA12B7D12 /* Build configuration list for PBXNativeTarget "PBXMergeTest" */;
+			buildPhases = (
+				C6D36CB56A46A47D530C09EC773331A6 /* Sources */,
+				8F35C8658866B757B1703AFF727DA436 /* Frameworks */,
+				02CCEA8390F7BA76DED392DE2F9DC405 /* Resources */,
 			);
-			mainGroup = FEEB8FF243A6203383A861921D66AB75;
-			productRefGroup = 57EB0F8A6E67829443B0D97F41701E9B /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				161EFD281DA903F3B70FEDAAD80E0209 /* PBXMergeTest */,
-				69215437C48110917D533D57830D8F6E /* PBXMergeTestTarget2 */,
+			buildRules = (
 			);
+			dependencies = (
+			);
+			name = PBXMergeTest;
+			productName = PBXMergeTest;
+			productReference = AA1762EC93DC071886515F81A6C2821E /* PBXMergeTest.app */;
+			productType = "com.apple.product-type.application";
 		};
-/* End PBXProject section */
+		69215437C48110917D533D57830D8F6E /* PBXMergeTestTarget2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E3A11864E943DB5BE6CE7ED05C721CC /* Build configuration list for PBXNativeTarget "PBXMergeTestTarget2" */;
+			buildPhases = (
+				416DECA755687C2176FAFBE0796FB6C9 /* Sources */,
+				308346813A6179DD06C8113B110FB764 /* Frameworks */,
+				D4B34494016EED6006C9FFB97B97B231 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PBXMergeTestTarget2;
+			productName = PBXMergeTestTarget2;
+			productReference = E02A4BE40D467283762A61C4A271E34D /* PBXMergeTestTarget2.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
 	};
 	rootObject = 21E6826B7899581F58752B168580AE41 /* Project object */;
 }

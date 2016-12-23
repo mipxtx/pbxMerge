@@ -21,7 +21,7 @@ class Dumper
 
     private $forceArray = true;
 
-    const MAX_LENGTH = 150;
+    const MAX_LENGTH = 100;
 
     public function dump(File $file) {
         $str = $file->getHeading() . "\n";
@@ -40,14 +40,14 @@ class Dumper
         }
 
         $ret .= implode("\n", $out);
-        $ret .= "\n/* End " . $section->getName() . " section */\n";
+        $ret .= "\n/* End " . $section->getName() . " section */";
 
         return $ret;
     }
 
     public function dumpDefine(Define $define) {
         $ret = "";
-        $ret .= $this->dumpValue($define->getKey()) . " = " . $this->dumpDefineValue($define->getValue()) . "; ";
+        $ret .= $this->dumpValue($define->getKey()) . " = " . $this->dumpDefineValue($define->getValue()) . ";";
 
         return $ret;
     }
@@ -68,16 +68,16 @@ class Dumper
 
         $ident = "";
 
-        if(mb_strlen($str) > self::MAX_LENGTH || $this->forceArray){
+        if (mb_strlen($str) > self::MAX_LENGTH || $this->forceArray) {
             $ident = "\n" . $this->getIdent($this->level);
-            $str = $ident . implode(",".$ident, $out) . ",";
+            $str = $ident . implode("," . $ident, $out) . ",";
         }
 
         $ret .= $str;
 
         $this->level--;
-        if($ident){
-            $ret .= "\n" .  $this->getIdent($this->level);
+        if ($ident) {
+            $ret .= "\n" . $this->getIdent($this->level);
         }
         $ret .= ")";
 
@@ -92,7 +92,7 @@ class Dumper
         foreach ($ds->getItems() as $item) {
             $out[] = $this->dumpDefineValue($item);
         }
-        $str = implode('', $out);
+        $str = implode(' ', $out);
 
         $ident = "";
         if (mb_strlen($str) > self::MAX_LENGTH) {
@@ -103,7 +103,7 @@ class Dumper
         $ret .= $str;
         $this->level--;
 
-        if($ident){
+        if ($ident) {
             $ret .= "\n" . $this->getIdent($this->level);
         }
         $ret .= "}";
@@ -128,11 +128,12 @@ class Dumper
         }
     }
 
-    public function getIdent($count){
+    public function getIdent($count) {
         $out = "";
         for ($i = 0; $i < $count; $i++) {
             $out .= "\t";
         }
+
         return $out;
     }
 }
