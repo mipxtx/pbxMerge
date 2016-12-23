@@ -20,6 +20,7 @@ class WordIterator implements \Iterator
      * LineIterator constructor.
      *
      * @param string $text
+     * @param $baseLineNumber
      */
     public function __construct(string $text, $baseLineNumber) {
         $text = str_replace(["\t"], " ", $text);

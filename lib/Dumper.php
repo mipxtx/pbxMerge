@@ -21,7 +21,7 @@ class Dumper
 
     private $forceArray = true;
 
-    const MAX_LENGTH = 100;
+    const MAX_LENGTH = 150;
 
     public function dump(File $file) {
         $str = $file->getHeading() . "\n";
@@ -70,7 +70,10 @@ class Dumper
 
         if (mb_strlen($str) > self::MAX_LENGTH || $this->forceArray) {
             $ident = "\n" . $this->getIdent($this->level);
-            $str = $ident . implode("," . $ident, $out) . ",";
+            $str = implode("," . $ident, $out);
+            if($out){
+                $str = $ident . $str . ",";
+            }
         }
 
         $ret .= $str;
@@ -92,7 +95,7 @@ class Dumper
         foreach ($ds->getItems() as $item) {
             $out[] = $this->dumpDefineValue($item);
         }
-        $str = implode(' ', $out);
+        $str = implode(' ', $out) . " ";
 
         $ident = "";
         if (mb_strlen($str) > self::MAX_LENGTH) {
