@@ -12,6 +12,8 @@ class WordIterator implements \Iterator
 {
     private $words = [];
 
+    private $lineNumbers = [];
+
     private $current = 0;
 
     /**
@@ -19,36 +21,56 @@ class WordIterator implements \Iterator
      *
      * @param string $text
      */
-    public function __construct(string $text) {
-        $text = str_replace(["\t", "\n"], " ", $text);
+    public function __construct(string $text, $baseLineNumber) {
+        $text = str_replace(["\t"], " ", $text);
+        $lineNumber = $baseLineNumber;
         foreach (explode(" ", $text) as $word) {
             if ($word) {
-                if ($word[0] == '{') {
-                    $this->words[] = '{';
-                    $word = ltrim($word, '{');
-                    if(!$word){
-                        continue;
-                    }
-                }
-
-                $hasEnd = false;
-
-                foreach ([';', ','] as $char) {
-                    if ($word[mb_strlen($word) - 1] == $char) {
-                        $word = rtrim($word, $char);
-                        if ($word !== '') {
-                            $this->words[] = $word;
-                        }
-                        $this->words[] = $char;
-                        $hasEnd = true;
-                        break;
-                    }
-                }
-                if(!$hasEnd){
-                    $this->words[] = $word;
+                $lines = explode("\n", $word);
+                $first = array_shift($lines);
+                $this->addWord($first, $lineNumber);
+                foreach ($lines as $line) {
+                    $lineNumber++;
+                    $this->addWord($line, $lineNumber);
                 }
             }
         }
+    }
+
+    private function addWord($word, $lineNumber) {
+        if (!$word) {
+            return;
+        }
+
+        if ($word[0] == '{') {
+            $this->appendWord('{', $lineNumber);
+            $word = ltrim($word, '{');
+            if (!$word) {
+                return;
+            }
+        }
+
+        $hasEnd = false;
+
+        foreach ([';', ','] as $char) {
+            if ($word[mb_strlen($word) - 1] == $char) {
+                $word = rtrim($word, $char);
+                if ($word !== '') {
+                    $this->appendWord($word, $lineNumber);
+                }
+                $this->appendWord($char, $lineNumber);
+                $hasEnd = true;
+                break;
+            }
+        }
+        if (!$hasEnd) {
+            $this->appendWord($word, $lineNumber);
+        }
+    }
+
+    private function appendWord($word, $lineNumber) {
+        $this->words[] = $word;
+        $this->lineNumbers[count($this->words)-1] = $lineNumber;
     }
 
     public function next() {
@@ -82,6 +104,8 @@ class WordIterator implements \Iterator
     }
 
     public function debug() {
+        echo 'at line: ' . $this->lineNumbers[$this->current] . "\n";
+
         for ($i = $this->current - 2; $i < $this->current; $i++) {
             echo $this->words[$i] . " ";
         }

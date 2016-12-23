@@ -20,17 +20,12 @@ class Parser
     public function parse($fileName) {
 
         $text = file_get_contents($fileName);
-
-        echo $text;
         $lines = explode("\n", trim($text));
-
         $head = array_shift($lines);
-
-        $block = new WordIterator(implode("\n", $lines));
-
+        $block = new WordIterator(implode("\n", $lines), 2);
         $file = new File($head);
+        $this->parseItems($file, $block);
 
-        $this->parseItems($file,$block);
         return $file;
     }
 
@@ -41,6 +36,7 @@ class Parser
     public function parseList(WordIterator $block) {
         $list = new DefineStatements();
         $this->parseItems($list, $block);
+
         return $list;
     }
 
@@ -53,10 +49,7 @@ class Parser
         $result = new ValueArray();
         $block->next();
         while ($block->current() != ")") {
-            $block->debug();
             $item = $this->parseValue($block);
-
-            var_dump($item);
             $result->addItem($item);
             // ;/,
             $block->next();
@@ -70,36 +63,27 @@ class Parser
         // {
         $block->next();
 
+        /** @var Section $currentSection */
         $currentSection = null;
         while ($block->current() != "}") {
-
-            if($block->current() == "/*"){
+            if ($block->current() == "/*") {
                 $coment = $this->parseComment($block);
-
-                if(preg_match('/Begin ([A-Za-z]+) section/',$coment, $out)){
+                if (preg_match('/Begin ([A-Za-z]+) section/', $coment, $out)) {
                     $currentSection = new Section($out[1]);
                     $container->addItem($currentSection);
-                }
-
-                if(preg_match('/End ([A-Za-z]+) section/',$coment, $out)){
+                } elseif (preg_match('/End ([A-Za-z]+) section/', $coment, $out)) {
                     $currentSection = null;
                 }
+            } else {
+                $item = $this->parseDefine($block);
+                if ($currentSection == null) {
+                    $container->addItem($item);
+                } else {
+                    $currentSection->addItem($item);
+                }
+                // ;/,
+                $block->next();
             }
-
-            if($block->current() == "}"){
-                break;
-            }
-
-            $item = $this->parseDefine($block);
-
-            if($currentSection == null){
-                $container->addItem($item);
-            }else{
-                $currentSection->addItem($item);
-            }
-
-            // ;/,
-            $block->next();
         }
         // }
         $block->next();
@@ -147,6 +131,14 @@ class Parser
      */
     public function parseValue(WordIterator $block) {
         $key = $block->current();
+
+        if ($key[0] == '"' && $key != '""') {
+            do {
+                $current = $block->getNext();
+                $key .= " " . $current;
+            } while (strpos($current, '"') === false);
+        }
+
         $next = $block->getNext();
         $comment = null;
         if ($next == '/*') {

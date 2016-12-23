@@ -1,0 +1,49 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXProject section */
+		21E6826B7899581F58752B168580AE41 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "Denis Kirillov";
+				TargetAttributes = {
+					161EFD281DA903F3B70FEDAAD80E0209 = {
+						CreatedOnToolsVersion = 8.2;
+						DevelopmentTeam = 2XS5VLSBUW;
+						ProvisioningStyle = Automatic;
+					};
+					69215437C48110917D533D57830D8F6E = {
+						CreatedOnToolsVersion = 8.2;
+						DevelopmentTeam = 2XS5VLSBUW;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 13AD92F7A855A8251635807D6C65239B /* Build configuration list for PBXProject "PBXMergeTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FEEB8FF243A6203383A861921D66AB75;
+			productRefGroup = 57EB0F8A6E67829443B0D97F41701E9B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				161EFD281DA903F3B70FEDAAD80E0209 /* PBXMergeTest */,
+				69215437C48110917D533D57830D8F6E /* PBXMergeTestTarget2 */,
+			);
+		};
+/* End PBXProject section */
+	};
+	rootObject = 21E6826B7899581F58752B168580AE41 /* Project object */;
+}

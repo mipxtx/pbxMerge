@@ -19,19 +19,24 @@ class Dumper
 {
     private $level = 0;
 
+    private $forceArray = true;
+
+    const MAX_LENGTH = 150;
+
     public function dump(File $file) {
-        $str = $file->getHeading()."\n";
+        $str = $file->getHeading() . "\n";
         $str .= $this->dumpStatement($file);
 
-        return $str;
+        return $str . "\n";
     }
 
     public function dumpSection(Section $section) {
-        $ret = "\n\n/* Begin " . $section->getName() . " section */\n";
+        $ret = "\n/* Begin " . $section->getName() . " section */\n";
         $out = [];
 
         foreach ($section->getItems() as $item) {
-            $out[] = rtrim($this->dumpDefineValue($item));
+            $str = $this->getIdent($this->level) . $this->dumpDefineValue($item);
+            $out[] = $str;
         }
 
         $ret .= implode("\n", $out);
@@ -42,15 +47,7 @@ class Dumper
 
     public function dumpDefine(Define $define) {
         $ret = "";
-        if ($this->level < 3) {
-            for ($i = 0; $i < $this->level; $i++) {
-                $ret .= "\t";
-            }
-        }
         $ret .= $this->dumpValue($define->getKey()) . " = " . $this->dumpDefineValue($define->getValue()) . "; ";
-        if ($this->level < 3) {
-            $ret .= "\n";
-        }
 
         return $ret;
     }
@@ -61,8 +58,26 @@ class Dumper
 
     public function dumpValueArray(ValueArray $va) {
         $ret = "(";
+        $this->level++;
+        $out = [];
         foreach ($va->getItems() as $item) {
-            $ret .= $this->dumpValue($item) . ",\n";
+            $out[] = $this->dumpValue($item);
+        }
+
+        $str = implode(", ", $out) . ",";
+
+        $ident = "";
+
+        if(mb_strlen($str) > self::MAX_LENGTH || $this->forceArray){
+            $ident = "\n" . $this->getIdent($this->level);
+            $str = $ident . implode(",".$ident, $out) . ",";
+        }
+
+        $ret .= $str;
+
+        $this->level--;
+        if($ident){
+            $ret .= "\n" .  $this->getIdent($this->level);
         }
         $ret .= ")";
 
@@ -72,17 +87,26 @@ class Dumper
     public function dumpStatement(DefineStatements $ds) {
         $ret = '{';
         $this->level++;
+        $out = [];
+
         foreach ($ds->getItems() as $item) {
-            $ret .= $this->dumpDefineValue($item);
+            $out[] = $this->dumpDefineValue($item);
         }
+        $str = implode('', $out);
+
+        $ident = "";
+        if (mb_strlen($str) > self::MAX_LENGTH) {
+            $ident = $this->getIdent($this->level);
+            $str = "\n{$ident}" . implode("\n{$ident}", $out);
+        }
+
+        $ret .= $str;
         $this->level--;
-        if ($this->level < 2 && $ds->count()) {
-            for ($i = 0; $i < $this->level; $i++) {
-                $ret .= "\t";
-            }
+
+        if($ident){
+            $ret .= "\n" . $this->getIdent($this->level);
         }
         $ret .= "}";
-
 
         return $ret;
     }
@@ -102,5 +126,13 @@ class Dumper
             default:
                 throw new Exception(get_class($df) . ' dump desc not found');
         }
+    }
+
+    public function getIdent($count){
+        $out = "";
+        for ($i = 0; $i < $count; $i++) {
+            $out .= "\t";
+        }
+        return $out;
     }
 }

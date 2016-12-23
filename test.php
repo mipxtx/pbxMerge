@@ -8,7 +8,7 @@
 
 include __DIR__ . "/vendor/autoload.php";
 $parser = new \PbxParser\Parser();
-$file = $parser->parse(__DIR__ . "/project.pbxproj");
+$file = $parser->parse(__DIR__ . "/test.pbxproj");
 
 
 $dumper = new \PbxParser\Dumper();
