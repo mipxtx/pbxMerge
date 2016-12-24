@@ -8,8 +8,6 @@
 
 namespace PbxParser;
 
-use PbxParser\Entity\Section;
-
 class Service
 {
     const FILE_NAME = 'project.pbxproj';

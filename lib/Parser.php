@@ -132,7 +132,7 @@ class Parser
     public function parseValue(WordIterator $block) {
         $key = $block->current();
 
-        if (substr_count($key, '"') ==1) {
+        if (substr_count($key, '"') == 1) {
             do {
                 $current = $block->getNext();
                 $key .= " " . $current;
