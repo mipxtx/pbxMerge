@@ -7,8 +7,8 @@
  */
 
 
-$fileName = __DIR__ . "/project.pbxproj";
-//$fileName = getcwd() . "/" . $argv[1] . "\n";
+//$fileName = __DIR__ . "/project.pbxproj";
+$fileName = getcwd() . "/" . $argv[1] . "\n";
 
 include __DIR__ . "/vendor/autoload.php";
 $parser = new \PbxParser\Parser();
