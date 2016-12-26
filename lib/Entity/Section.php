@@ -8,7 +8,7 @@
 
 namespace PbxParser\Entity;
 
-class Section extends DefineStatements
+class Section extends DefineStatements implements DefineStatementsContent
 {
     private $name;
 

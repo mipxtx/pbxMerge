@@ -10,26 +10,36 @@ namespace PbxParser\Entity;
 
 class DefineStatements implements DefineValue
 {
+    private $keys = [];
+
     /**
-     * @var DefineValue[]
+     * @var DefineStatementsContent[]
      */
     private $items = [];
 
     /**
-     * @param DefineValue $item
+     * @param DefineStatementsContent $item
      */
-    public function addItem(DefineValue $item) {
+    public function addItem(DefineStatementsContent $item) {
         $this->items[] = $item;
+
+        if ($item instanceof Define) {
+            $keys[$item->getKey()->getValue()] = $item;
+        }
     }
 
     /**
-     * @return DefineValue[]
+     * @return DefineStatementsContent[]
      */
     public function getItems(): array {
         return $this->items;
     }
 
-    public function count(){
+    public function count() {
         return count($this->items);
+    }
+
+    public function hasKey($key) {
+        return array_key_exists($key, $this->keys);
     }
 }

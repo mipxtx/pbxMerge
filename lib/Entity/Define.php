@@ -8,7 +8,7 @@
 
 namespace PbxParser\Entity;
 
-class Define implements DefineValue
+class Define implements DefineValue, DefineStatementsContent
 {
     /**
      * @var Value

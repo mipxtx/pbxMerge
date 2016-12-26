@@ -17,6 +17,8 @@ use PbxParser\Entity\Value;
 
 class Parser
 {
+    private $file;
+
     public function parse($fileName) {
 
         $text = file_get_contents($fileName);
@@ -25,6 +27,7 @@ class Parser
         $block = new WordIterator(implode("\n", $lines), 2);
         $file = new File($head);
         $this->parseItems($file, $block);
+        $this->file = $file;
 
         return $file;
     }

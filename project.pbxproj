@@ -20,6 +20,14 @@
 		0D88FD1E939EF3264B33714C22A2BDE5 /* ViewControllerA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A038E2DDC49E2087BCA07D752A1173 /* ViewControllerA.swift */; };
 		9417F3083266AB842DE9F140AC4D2956 /* ViewControllerB.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C4EE13DE2780A750665E95D515EB76 /* ViewControllerB.swift */; };
 		556B988F1BC7640E55E1655DB0B6F4F9 /* ViewControllerC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74841E5C5338D2D6411C4C875B9A237A /* ViewControllerC.swift */; };
+		F2B666660983328FA0D2EF5DF65C4C72 /* ViewControllerD.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE409391AB962DDB217B7E4A0C6D6988 /* ViewControllerD.swift */; };
+		499778EA0347C7555F4A07EAAC68F4A6 /* ViewControllerD.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE409391AB962DDB217B7E4A0C6D6988 /* ViewControllerD.swift */; };
+		A62C475089D2EE949F8E804114B713B1 /* ViewControllerE.swift in Sources */ = {isa = PBXBuildFile; fileRef = E52836386D234967358CB7773DE73ED6 /* ViewControllerE.swift */; };
+		D62FD7A0BCF846128329DC0FCC008686 /* ViewControllerE.swift in Sources */ = {isa = PBXBuildFile; fileRef = E52836386D234967358CB7773DE73ED6 /* ViewControllerE.swift */; };
+		880E4F150D145B43EDC78C231538E3D7 /* ViewControllerF.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC44CE252AAAF347BDEB3FCABD0A9182 /* ViewControllerF.swift */; };
+		B49749C357386569127D3C2684F498AD /* ViewControllerF.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC44CE252AAAF347BDEB3FCABD0A9182 /* ViewControllerF.swift */; };
+		8378204B3CC091468CCF281988F38AC6 /* ViewControllerG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00153CEE8562DFB94DF37665C5C838DD /* ViewControllerG.swift */; };
+		64F2AF76138912B541132E4649A9F7A9 /* ViewControllerG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00153CEE8562DFB94DF37665C5C838DD /* ViewControllerG.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +48,10 @@
 		52A038E2DDC49E2087BCA07D752A1173 /* ViewControllerA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerA.swift; sourceTree = "<group>"; };
 		C8C4EE13DE2780A750665E95D515EB76 /* ViewControllerB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerB.swift; sourceTree = "<group>"; };
 		74841E5C5338D2D6411C4C875B9A237A /* ViewControllerC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerC.swift; sourceTree = "<group>"; };
+		CE409391AB962DDB217B7E4A0C6D6988 /* ViewControllerD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerD.swift; sourceTree = "<group>"; };
+		E52836386D234967358CB7773DE73ED6 /* ViewControllerE.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerE.swift; sourceTree = "<group>"; };
+		EC44CE252AAAF347BDEB3FCABD0A9182 /* ViewControllerF.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerF.swift; sourceTree = "<group>"; };
+		00153CEE8562DFB94DF37665C5C838DD /* ViewControllerG.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerG.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +93,7 @@
 		F6CA872A958A2ECE014052B1443FD032 /* PBXMergeTest */ = {
 			isa = PBXGroup;
 			children = (
+				3A8ACB085018A2CF901D0B378E29981D /* Feature 1 New Files */,
 				568426CF37E38A395D3471C124DD9905 /* AppDelegate.swift */,
 				D0D4A9CA3897988A8076EBF88898AA79 /* Assets.xcassets */,
 				3A8BAAF5B5AEB2D69CA1F96B99FD045D /* Info.plist */,
@@ -90,6 +103,7 @@
 				52A038E2DDC49E2087BCA07D752A1173 /* ViewControllerA.swift */,
 				C8C4EE13DE2780A750665E95D515EB76 /* ViewControllerB.swift */,
 				74841E5C5338D2D6411C4C875B9A237A /* ViewControllerC.swift */,
+				00153CEE8562DFB94DF37665C5C838DD /* ViewControllerG.swift */,
 			);
 			path = PBXMergeTest;
 			sourceTree = "<group>";
@@ -105,6 +119,16 @@
 				7A474435A0067EA4444D1076D620879B /* ViewController.swift */,
 			);
 			path = PBXMergeTestTarget2;
+			sourceTree = "<group>";
+		};
+		3A8ACB085018A2CF901D0B378E29981D /* Feature 1 New Files */ = {
+			isa = PBXGroup;
+			children = (
+				CE409391AB962DDB217B7E4A0C6D6988 /* ViewControllerD.swift */,
+				E52836386D234967358CB7773DE73ED6 /* ViewControllerE.swift */,
+				EC44CE252AAAF347BDEB3FCABD0A9182 /* ViewControllerF.swift */,
+			);
+			name = "Feature 1 New Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,6 +242,10 @@
 				0D88FD1E939EF3264B33714C22A2BDE5 /* ViewControllerA.swift in Sources */,
 				9417F3083266AB842DE9F140AC4D2956 /* ViewControllerB.swift in Sources */,
 				556B988F1BC7640E55E1655DB0B6F4F9 /* ViewControllerC.swift in Sources */,
+				F2B666660983328FA0D2EF5DF65C4C72 /* ViewControllerD.swift in Sources */,
+				A62C475089D2EE949F8E804114B713B1 /* ViewControllerE.swift in Sources */,
+				880E4F150D145B43EDC78C231538E3D7 /* ViewControllerF.swift in Sources */,
+				8378204B3CC091468CCF281988F38AC6 /* ViewControllerG.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,6 +255,10 @@
 			files = (
 				CCC61B7B809F913F6C911B5F89A049A6 /* AppDelegate.swift in Sources */,
 				F6440ACDFA06254285DD0FD94D20C664 /* ViewController.swift in Sources */,
+				499778EA0347C7555F4A07EAAC68F4A6 /* ViewControllerD.swift in Sources */,
+				D62FD7A0BCF846128329DC0FCC008686 /* ViewControllerE.swift in Sources */,
+				B49749C357386569127D3C2684F498AD /* ViewControllerF.swift in Sources */,
+				64F2AF76138912B541132E4649A9F7A9 /* ViewControllerG.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
