@@ -15,10 +15,12 @@ class File extends DefineStatements
     /**
      * File constructor.
      *
-     * @param $heading
+     * @param string $heading
      */
     public function __construct($heading) {
         $this->heading = $heading;
+        $this->file = $this;
+        $this->parent = $this;
     }
 
     /**
@@ -28,6 +30,7 @@ class File extends DefineStatements
         return $this->heading;
     }
 
-
-
+    public function getPath() {
+        return "->";
+    }
 }

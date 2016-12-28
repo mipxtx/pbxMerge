@@ -1,0 +1,10 @@
+// !$*UTF8*$!
+{
+	objects = {
+
+/* Begin PBXBuildFile section */
+                556B988F1BC7640E55E1655DB0B6F4F9 /* ViewControllerC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74841E5C5338D2D6411C4C875B9A237A /* ViewControllerC.swift */; };
+                556B988F1BC7640E55E1655DB0B6F4F0 /* ViewControllerC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74841E5C5338D2D6411C4C875B9A237A /* ViewControllerC.swift */; };
+/* End PBXBuildFile section */
+    }
+}

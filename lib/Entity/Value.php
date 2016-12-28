@@ -10,8 +10,16 @@ namespace PbxParser\Entity;
 
 class Value implements DefineValue
 {
+    use LinksTrait;
+
+    /**
+     * @var string
+     */
     private $value;
 
+    /**
+     * @var string
+     */
     private $comment;
 
     /**
@@ -20,7 +28,7 @@ class Value implements DefineValue
      * @param $value
      * @param $comment
      */
-    public function __construct($value, $comment = null) {
+    public function __construct(string $value, string $comment = null) {
         $this->value = $value;
         $this->comment = $comment;
     }
@@ -28,7 +36,7 @@ class Value implements DefineValue
     /**
      * @return mixed
      */
-    public function getValue() {
+    public function getValue():string {
         return $this->value;
     }
 
@@ -39,5 +47,25 @@ class Value implements DefineValue
         return $this->comment;
     }
 
+    public function getPath() {
+        return $this->getParent()->getPath() . ' ' . $this->value;
+    }
 
+    /**
+     * @param DefineValue $val
+     * @return bool
+     */
+    public function equal(DefineValue $val) {
+        if (!$val instanceof Value) {
+            return false;
+        }
+        return $this->getValue() == $val->getValue() && $this->getComment() == $val->getComment();
+    }
+
+    /**
+     * @return DefineValue[]
+     */
+    public function getChildren() {
+        return [];
+    }
 }

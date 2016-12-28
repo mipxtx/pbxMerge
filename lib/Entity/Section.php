@@ -17,16 +17,27 @@ class Section extends DefineStatements implements DefineStatementsContent
      *
      * @param $name
      */
-    public function __construct($name) {
+    public function __construct(string $name) {
         $this->name = $name;
     }
 
     /**
      * @return mixed
      */
-    public function getName() {
+    public function getName():string {
         return $this->name;
     }
 
+    public function getPath() {
+        return $this->getParent()->getPath() . " #" . $this->name;
+    }
+
+    public function equal(DefineValue $val) {
+        if (!$val instanceof Section) {
+            return false;
+        }
+
+        return $val->getName() == $this->getName() && parent::equal($val);
+    }
 
 }

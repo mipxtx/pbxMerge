@@ -9,6 +9,7 @@
 namespace PbxParser;
 
 use PbxParser\Entity\Define;
+use PbxParser\Entity\DefineValue;
 use PbxParser\Entity\ValueArray;
 use PbxParser\Entity\DefineStatements;
 use PbxParser\Entity\File;
@@ -17,7 +18,6 @@ use PbxParser\Entity\Value;
 
 class Parser
 {
-    private $file;
 
     public function parse($fileName) {
 
@@ -27,7 +27,7 @@ class Parser
         $block = new WordIterator(implode("\n", $lines), 2);
         $file = new File($head);
         $this->parseItems($file, $block);
-        $this->file = $file;
+        $file->initLinks($file);
 
         return $file;
     }
@@ -68,7 +68,7 @@ class Parser
 
         /** @var Section $currentSection */
         $currentSection = null;
-        while ($block->current() != "}") {
+        while ($block->current() != "}" && $block->valid()) {
             if ($block->current() == "/*") {
                 $coment = $this->parseComment($block);
                 if (preg_match('/Begin ([A-Za-z]+) section/', $coment, $out)) {
@@ -78,7 +78,7 @@ class Parser
                     $currentSection = null;
                 }
             } else {
-                $item = $this->parseDefine($block);
+                $item = $this->parseDefine($container, $block);
                 if ($currentSection == null) {
                     $container->addItem($item);
                 } else {
@@ -109,7 +109,7 @@ class Parser
      * @return Define
      * @throws Exception
      */
-    public function parseDefine(WordIterator $block) {
+    public function parseDefine(DefineStatements $parent, WordIterator $block) {
         $key = $this->parseValue($block);
         if ($block->current() != "=") {
             var_dump($key);
@@ -117,6 +117,8 @@ class Parser
             throw new Exception('eq not found');
         }
         $block->next();
+
+
         if ($block->current() == '{') {
             $value = $this->parseList($block);
         } elseif ($block->current() == '(') {
@@ -125,7 +127,8 @@ class Parser
             $value = $this->parseValue($block);
         }
 
-        return new Define($key, $value);
+        $define = new Define($key, $value);
+        return $define;
     }
 
     /**

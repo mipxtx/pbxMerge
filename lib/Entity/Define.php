@@ -10,6 +10,8 @@ namespace PbxParser\Entity;
 
 class Define implements DefineValue, DefineStatementsContent
 {
+    use LinksTrait;
+
     /**
      * @var Value
      */
@@ -45,5 +47,33 @@ class Define implements DefineValue, DefineStatementsContent
         return $this->value;
     }
 
+    public function getName(): string {
+        return $this->getKey()->getValue();
+    }
 
+    public function getPath() {
+        return $this->parent->getPath() . " <" . $this->key->getValue() . ">";
+    }
+
+    /**
+     * @param DefineValue $val
+     * @return bool
+     */
+    public function equal(DefineValue $val) {
+        $res =
+            $val instanceof Define
+            && $this->getKey()->equal($val->getKey())
+            && $this->getValue()->equal($val->getValue());
+        return $res;
+    }
+
+    /**
+     * @return DefineValue[]
+     */
+    public function getChildren() {
+        return [
+            $this->key,
+            $this->value
+        ];
+    }
 }

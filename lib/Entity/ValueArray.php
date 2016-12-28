@@ -10,10 +10,13 @@ namespace PbxParser\Entity;
 
 class ValueArray implements DefineValue
 {
+    use LinksTrait;
+
     /**
      * @var Value[]
      */
     private $items = [];
+
 
     public function addItem(Value $item) {
         $this->items[] = $item;
@@ -26,6 +29,35 @@ class ValueArray implements DefineValue
         return $this->items;
     }
 
+    public function getPath() {
+        return $this->getParent()->getPath() . " (";
+    }
 
+    /**
+     * @param DefineValue $val
+     * @return bool
+     */
+    public function equal(DefineValue $val) {
+        if (!$val instanceof ValueArray) {
+            return false;
+        }
+        if (count($val->getItems()) != count($this->items)) {
+            return false;
+        }
 
+        foreach ($val->getItems() as $i => $item) {
+            if (!isset($this->items[$i]) || !$this->items[$i]->equal($item)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return DefineValue[]
+     */
+    public function getChildren() {
+        return $this->items;
+    }
 }

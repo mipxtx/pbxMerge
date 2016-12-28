@@ -71,7 +71,7 @@ class Dumper
         if (mb_strlen($str) > self::MAX_LENGTH || $this->forceArray) {
             $ident = "\n" . $this->getIdent($this->level);
             $str = implode("," . $ident, $out);
-            if($out){
+            if ($out) {
                 $str = $ident . $str . ",";
             }
         }
@@ -98,7 +98,7 @@ class Dumper
         $str = implode(' ', $out) . " ";
 
         $ident = "";
-        if (mb_strlen($str) > self::MAX_LENGTH) {
+        if (mb_strlen($str) > self::MAX_LENGTH || strpos($str, "\n") !== false) {
             $ident = $this->getIdent($this->level);
             $str = "\n{$ident}" . implode("\n{$ident}", $out);
         }
