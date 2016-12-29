@@ -8,7 +8,7 @@
 
 namespace PbxParser\Entity;
 
-class Define implements DefineValue, DefineStatementsContent
+class Define implements DefineValue, DictionaryContent
 {
     use LinksTrait;
 

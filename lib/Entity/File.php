@@ -8,7 +8,7 @@
 
 namespace PbxParser\Entity;
 
-class File extends DefineStatements
+class File extends Dictionary
 {
     private $heading;
 

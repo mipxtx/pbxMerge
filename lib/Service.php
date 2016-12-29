@@ -11,33 +11,60 @@ namespace PbxParser;
 class Service
 {
     const FILE_NAME = 'project.pbxproj';
+    const PARTS_DIR = 'pbx_parts';
 
-    public function export($arg = null) {
+    public function export($path, $name) {
+        $parser = new Parser();
+        $merge = new MergeService();
+        $dumper = new Dumper();
 
-        $path = getcwd() . "/";
-
-        if ($arg) {
-            if ($arg[0] == "/") {
-                $path = $arg;
+        $dir = getcwd() . "/";
+        if ($path) {
+            if ($path[0] == "/") {
+                $dir = $path;
             } else {
-                $path .= $arg;
+                $dir .= $path;
             }
         }
 
-        if (is_dir($path)) {
-            $path .= "/" . self::FILE_NAME;
+        $dir = realpath($dir);
+        if (!is_dir($dir)) {
+            $dir = dirname($dir);
         }
 
+        $path = $dir . "/" . self::FILE_NAME;
         if (!file_exists($path)) {
             throw new Exception('file not found:' . $path);
         }
+        $origin = $parser->parse($path);
 
-        $parser = new Parser();
+        $files = [];
+        $partsDir = $dir . "/" . self::PARTS_DIR;
 
-        $file = $parser->parse($path);
+        if (!file_exists($partsDir)) {
+            mkdir($partsDir);
+        }
 
+        foreach (scandir($partsDir) as $file) {
+            if ($file[0] == ".") {
+                continue;
+            }
+            $files[$file] = $parser->parse($partsDir . "/" . $file);
+        }
 
+        $processor = new Processor($origin, $files, $name);
+        $out = $processor->process();
+
+        if ($out) {
+            if (isset($files[$name])) {
+                $files[$name] = $merge->mergeFiles([$files[$name], $out]);
+            } else {
+                $files[$name] = $out;
+            }
+        }
+
+        foreach ($files as $name => $file) {
+            file_put_contents($partsDir . "/" . $name, $dumper->dump($file));
+        }
     }
-
-
 }

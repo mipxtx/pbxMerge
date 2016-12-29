@@ -11,14 +11,13 @@ namespace PbxParser;
 use PbxParser\Entity\Define;
 use PbxParser\Entity\DefineValue;
 use PbxParser\Entity\ValueArray;
-use PbxParser\Entity\DefineStatements;
+use PbxParser\Entity\Dictionary;
 use PbxParser\Entity\File;
 use PbxParser\Entity\Section;
 use PbxParser\Entity\Value;
 
 class Parser
 {
-
     public function parse($fileName) {
 
         $text = file_get_contents($fileName);
@@ -34,10 +33,10 @@ class Parser
 
     /**
      * @param WordIterator $block
-     * @return DefineStatements
+     * @return Dictionary
      */
     public function parseList(WordIterator $block) {
-        $list = new DefineStatements();
+        $list = new Dictionary();
         $this->parseItems($list, $block);
 
         return $list;
@@ -62,7 +61,7 @@ class Parser
         return $result;
     }
 
-    public function parseItems(DefineStatements $container, WordIterator $block) {
+    public function parseItems(Dictionary $container, WordIterator $block) {
         // {
         $block->next();
 
@@ -78,7 +77,7 @@ class Parser
                     $currentSection = null;
                 }
             } else {
-                $item = $this->parseDefine($container, $block);
+                $item = $this->parseDefine($block);
                 if ($currentSection == null) {
                     $container->addItem($item);
                 } else {
@@ -109,7 +108,7 @@ class Parser
      * @return Define
      * @throws Exception
      */
-    public function parseDefine(DefineStatements $parent, WordIterator $block) {
+    public function parseDefine(WordIterator $block) {
         $key = $this->parseValue($block);
         if ($block->current() != "=") {
             var_dump($key);

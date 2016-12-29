@@ -17,7 +17,6 @@ class ValueArray implements DefineValue
      */
     private $items = [];
 
-
     public function addItem(Value $item) {
         $this->items[] = $item;
     }
@@ -54,10 +53,30 @@ class ValueArray implements DefineValue
         return true;
     }
 
+    public function resort(){
+        usort(
+            $this->items,
+            function (Value $a, Value $b) {
+                return strcmp($a->getComment(), $b->getComment());
+            }
+        );
+    }
+
     /**
      * @return DefineValue[]
      */
     public function getChildren() {
         return $this->items;
+    }
+
+    public function removeValue(Value $val) {
+        foreach ($this->items as $i => $item) {
+            if ($val->getValue() == $item->getValue()) {
+                unset($this->items[$i]);
+                $this->items = array_values($this->items);
+
+                return;
+            }
+        }
     }
 }

@@ -12,7 +12,9 @@ use PbxParser\Entity\File;
 use PbxParser\Entity\Define;
 use PbxParser\Entity\Section;
 use PbxParser\Entity\DefineValue;
-use PbxParser\Entity\DefineStatements;
+use PbxParser\Entity\Dictionary;
+use PbxParser\Entity\Value;
+use PbxParser\Entity\ValueArray;
 
 class Processor
 {
@@ -56,7 +58,7 @@ class Processor
     public function process() {
         $files = $this->files;
         $files[] = $this->myFile;
-        $merge = $this->merge->merge($files);
+        $merge = $this->merge->mergeFiles($files);
         $file = $this->compare($this->original, $merge);
 
         return $file;
@@ -80,13 +82,16 @@ class Processor
                     return $this->compareFiles($origin, $parts);
                 case Define::class :
                     return $this->compareDefine($origin, $parts);
-                case DefineStatements::class:
+                case Dictionary::class:
                     return $this->compareDefineStatements($origin, $parts);
                 case Section::class:
                     return $this->compareSections($origin, $parts);
+                case ValueArray::class:
+                    return $this->compareValueArray($origin, $parts);
+                case Value::class:
+                    return $this->compareValue($origin, $parts);
                 default:
-                    echo 'got ' . get_class($origin) . " at " . __FILE__ . ":" . __LINE__ . "\n";
-                    die();
+                    throw new Exception('got ' . get_class($origin) . " at " . $origin->getPath());
             }
         }
     }
@@ -125,12 +130,12 @@ class Processor
     }
 
     /**
-     * @param DefineStatements $origin
-     * @param DefineStatements $parts
-     * @param DefineStatements $container
-     * @return DefineStatements
+     * @param Dictionary $origin
+     * @param Dictionary $parts
+     * @param Dictionary $container
+     * @return Dictionary
      */
-    public function compareDefContent(DefineStatements $origin, DefineStatements $parts, DefineStatements $container) {
+    public function compareDefContent(Dictionary $origin, Dictionary $parts, Dictionary $container) {
 
         $newKeys = array_diff($origin->getKeys(), $parts->getKeys());
         $missedKeys = array_diff($parts->getKeys(), $origin->getKeys());
@@ -160,9 +165,84 @@ class Processor
         return $container;
     }
 
-    public function compareDefineStatements(DefineStatements $origin, DefineStatements $parts) {
-        $container = new DefineStatements();
+    public function compareDefineStatements(Dictionary $origin, Dictionary $parts) {
+        $container = new Dictionary();
 
         return $this->compareDefContent($origin, $parts, $container);
+    }
+
+    /**
+     * @param ValueArray $origin
+     * @param ValueArray $parts
+     * @return ValueArray
+     * @throws Exception
+     */
+    public function compareValueArray(ValueArray $origin, ValueArray $parts) {
+        /** @var DefineValue[] $originItems */
+        $originItems = [];
+        foreach ($origin->getItems() as $item) {
+            if ($item instanceof Value) {
+                $originItems[$item->getValue()] = $item;
+            } else {
+                throw new Exception('Array content: ' . get_class($item) . " at " . $origin->getPath());
+            }
+        }
+
+        /** @var DefineValue[] $partsItems */
+        $partsItems = [];
+        foreach ($parts->getItems() as $item) {
+            if ($item instanceof Value) {
+                $partsItems[$item->getValue()] = $item;
+            } else {
+                throw new Exception('Array content: ' . get_class($item) . " at " . $origin->getPath());
+            }
+        }
+
+        $out = new ValueArray();
+
+        $newKeys = array_diff(array_keys($originItems), array_keys($partsItems));
+        foreach ($newKeys as $key) {
+            $out->addItem($originItems[$key]);
+        }
+
+        $oldKeys = array_diff(array_keys($partsItems), array_keys($originItems));
+        foreach ($oldKeys as $key) {
+            $parts->removeValue($partsItems[$key]);
+        }
+
+        $commonKeys = array_intersect(array_keys($partsItems), array_keys($originItems));
+        foreach ($commonKeys as $key) {
+            $orig = $originItems[$key];
+            $prts = $partsItems[$key];
+            if(!$orig->equal($prts)){
+                $out->addItem($orig);
+                $parts->removeValue($prts);
+            }else{
+
+            }
+        }
+
+        if (count($out->getChildren())) {
+            return $out;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param Value $origin
+     * @param Value $parts
+     * @return Value
+     */
+    public function compareValue(Value $origin, Value $parts) {
+        /** @var Define $parent */
+        $parent = $parts->getParent();
+        $key = $parent->getKey()->getValue();
+
+        /** @var Dictionary $holder */
+        $holder = $parent->getParent();
+        $holder->removeByKey($key);
+
+        return $origin;
     }
 }

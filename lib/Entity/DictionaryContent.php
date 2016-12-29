@@ -8,7 +8,7 @@
 
 namespace PbxParser\Entity;
 
-interface DefineStatementsContent extends DefineValue
+interface DictionaryContent extends DefineValue
 {
-    public function getName():string;
+    public function getName(): string;
 }

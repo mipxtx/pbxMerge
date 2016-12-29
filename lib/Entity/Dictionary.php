@@ -8,24 +8,24 @@
 
 namespace PbxParser\Entity;
 
-class DefineStatements implements DefineValue
+class Dictionary implements DefineValue
 {
     use LinksTrait;
 
     /**
-     * @var DefineStatementsContent[]
+     * @var DictionaryContent[]
      */
     private $items = [];
 
     /**
-     * @param DefineStatementsContent $item
+     * @param DictionaryContent $item
      */
-    public function addItem(DefineStatementsContent $item) {
+    public function addItem(DictionaryContent $item) {
         $this->items[$item->getName()] = $item;
     }
 
     /**
-     * @return DefineStatementsContent[]
+     * @return DictionaryContent[]
      */
     public function getItems(): array {
         return $this->items;
@@ -67,7 +67,7 @@ class DefineStatements implements DefineValue
      */
     public function equal(DefineValue $val) {
 
-        if (!$val instanceof DefineStatements) {
+        if (!$val instanceof Dictionary) {
             return false;
         }
 

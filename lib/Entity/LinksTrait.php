@@ -16,12 +16,12 @@ trait LinksTrait
     protected $file;
 
     /**
-     * @var DefineStatements
+     * @var
      */
     protected $parent;
 
     /**
-     * @return DefineStatements
+     * @return DefineValue
      */
     public function getParent() {
         return $this->parent;

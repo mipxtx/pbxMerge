@@ -66,11 +66,23 @@ echo $dumper->dump($parts);
 echo "============\n";
 $processor = new \PbxParser\Processor($origin, [$parts], 'lll');
 $out = $processor->process();
+echo "new parts:\n";
+echo $dumper->dump($parts);
 echo "diff:\n";
 echo $dumper->dump($out);
-echo "new:\n";
-echo $dumper->dump($parts);
 
 
-echo "";
+echo "============\n";
+$mergeS = new \PbxParser\MergeService();
+
+$merge = $mergeS->mergeFiles([$parts, $out]);
+
+echo $dumper->dump($merge);
+
+
+
+
+
+
+
 

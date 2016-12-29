@@ -8,7 +8,7 @@
 namespace PbxParser;
 
 use PbxParser\Entity\Define;
-use PbxParser\Entity\DefineStatements;
+use PbxParser\Entity\Dictionary;
 use PbxParser\Entity\DefineValue;
 use PbxParser\Entity\File;
 use PbxParser\Entity\Section;
@@ -21,11 +21,13 @@ class Dumper
 
     private $forceArray = true;
 
+    private $forceDict = true;
+
     const MAX_LENGTH = 150;
 
     public function dump(File $file) {
         $str = $file->getHeading() . "\n";
-        $str .= $this->dumpStatement($file);
+        $str .= $this->dumpDictionary($file);
 
         return $str . "\n";
     }
@@ -60,14 +62,12 @@ class Dumper
         $ret = "(";
         $this->level++;
         $out = [];
+        $va->resort();
         foreach ($va->getItems() as $item) {
             $out[] = $this->dumpValue($item);
         }
-
         $str = implode(", ", $out) . ",";
-
         $ident = "";
-
         if (mb_strlen($str) > self::MAX_LENGTH || $this->forceArray) {
             $ident = "\n" . $this->getIdent($this->level);
             $str = implode("," . $ident, $out);
@@ -75,9 +75,7 @@ class Dumper
                 $str = $ident . $str . ",";
             }
         }
-
         $ret .= $str;
-
         $this->level--;
         if ($ident) {
             $ret .= "\n" . $this->getIdent($this->level);
@@ -87,7 +85,7 @@ class Dumper
         return $ret;
     }
 
-    public function dumpStatement(DefineStatements $ds) {
+    public function dumpDictionary(Dictionary $ds) {
         $ret = '{';
         $this->level++;
         $out = [];
@@ -98,7 +96,7 @@ class Dumper
         $str = implode(' ', $out) . " ";
 
         $ident = "";
-        if (mb_strlen($str) > self::MAX_LENGTH || strpos($str, "\n") !== false) {
+        if (mb_strlen($str) > self::MAX_LENGTH || strpos($str, "\n") !== false || $this->forceDict) {
             $ident = $this->getIdent($this->level);
             $str = "\n{$ident}" . implode("\n{$ident}", $out);
         }
@@ -120,8 +118,8 @@ class Dumper
                 return $this->dumpValue($df);
             case ValueArray::class :
                 return $this->dumpValueArray($df);
-            case DefineStatements::class:
-                return $this->dumpStatement($df);
+            case Dictionary::class:
+                return $this->dumpDictionary($df);
             case Section::class:
                 return $this->dumpSection($df);
             case Define::class:
