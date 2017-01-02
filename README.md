@@ -16,13 +16,17 @@ Merge process operates in two stages
  
 ##How to use
 ###tl;dr
-`
-cp pbxMerge/build/* you/project/;
-cd you/project;
-mkdir -p .git/hooks;
-echo './export path/to/project.pbxproj' > .git/hooks/pre-commit;
-echo './import path/to/project.pbxproj'>.git/hooks/post-merge; chmod 775 .git/hooks/post-merge;
-chmod 775 pbx.phar export import .git/hooks/pre-commit .git/hooks/post-merge;`
+`cp pbxMerge/build/* you/project/;`
+
+`cd you/project;`
+
+`mkdir -p .git/hooks;`
+
+`echo './export path/to/project.pbxproj' > .git/hooks/pre-commit;`
+
+`echo './import path/to/project.pbxproj'>.git/hooks/post-merge; chmod 775 .git/hooks/post-merge;`
+
+`chmod 775 pbx.phar export import .git/hooks/pre-commit .git/hooks/post-merge;`
 
 ###description
 
