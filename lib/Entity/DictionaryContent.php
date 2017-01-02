@@ -10,5 +10,5 @@ namespace PbxParser\Entity;
 
 interface DictionaryContent extends DefineValue
 {
-    public function getName(): string;
+    public function getName();
 }

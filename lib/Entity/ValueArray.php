@@ -24,7 +24,7 @@ class ValueArray implements DefineValue
     /**
      * @return Value[]
      */
-    public function getItems(): array {
+    public function getItems() {
         return $this->items;
     }
 
@@ -57,7 +57,9 @@ class ValueArray implements DefineValue
         usort(
             $this->items,
             function (Value $a, Value $b) {
-                return strcmp($a->getComment(), $b->getComment());
+                $v1 = trim($a->getComment())?$a->getComment():$a->getValue();
+                $v2 = trim($b->getComment())?$b->getComment():$b->getValue();
+                return strcmp($v1, $v2);
             }
         );
     }

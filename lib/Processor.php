@@ -158,7 +158,10 @@ class Processor
                 if ($partsItem->equal($originItem)) {
                     continue;
                 }
-                $container->addItem($this->compare($originItem, $partsItem));
+                $res = $this->compare($originItem, $partsItem);
+                if($res) {
+                    $container->addItem($res);
+                }
             }
         }
 

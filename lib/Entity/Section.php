@@ -17,14 +17,14 @@ class Section extends Dictionary implements DictionaryContent
      *
      * @param $name
      */
-    public function __construct(string $name) {
+    public function __construct($name) {
         $this->name = $name;
     }
 
     /**
      * @return mixed
      */
-    public function getName():string {
+    public function getName() {
         return $this->name;
     }
 

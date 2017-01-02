@@ -27,7 +27,7 @@ class Dictionary implements DefineValue
     /**
      * @return DictionaryContent[]
      */
-    public function getItems(): array {
+    public function getItems(){
         return $this->items;
     }
 

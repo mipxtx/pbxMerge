@@ -36,18 +36,18 @@ class Define implements DefineValue, DictionaryContent
     /**
      * @return Value
      */
-    public function getKey(): Value {
+    public function getKey(){
         return $this->key;
     }
 
     /**
      * @return DefineValue
      */
-    public function getValue(): DefineValue {
+    public function getValue(){
         return $this->value;
     }
 
-    public function getName(): string {
+    public function getName() {
         return $this->getKey()->getValue();
     }
 

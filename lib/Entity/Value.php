@@ -28,7 +28,7 @@ class Value implements DefineValue
      * @param $value
      * @param $comment
      */
-    public function __construct(string $value, string $comment = null) {
+    public function __construct($value, $comment = null) {
         $this->value = $value;
         $this->comment = $comment;
     }
@@ -36,7 +36,7 @@ class Value implements DefineValue
     /**
      * @return mixed
      */
-    public function getValue():string {
+    public function getValue() {
         return $this->value;
     }
 

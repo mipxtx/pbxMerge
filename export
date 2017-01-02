@@ -1,0 +1,16 @@
+#!/bin/bash
+name=`git branch  | grep \* | awk '{print $2}'`
+folder=$1
+files=`./pbx.phar export --path=$folder --name=$name`
+count=0;
+for file in $files
+do
+	git add $file
+	count=`expr $count + 1`
+done;
+
+if [ "$count" -ne "0" ]
+then 
+	echo "pbx changed & files add to git index";
+	exit 1;
+fi

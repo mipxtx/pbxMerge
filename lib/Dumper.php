@@ -25,6 +25,11 @@ class Dumper
 
     const MAX_LENGTH = 150;
 
+    public function __construct($forceDict = true, $forceArray = true) {
+        $this->forceArray = $forceArray;
+        $this->forceDict = $forceDict;
+    }
+
     public function dump(File $file) {
         $str = $file->getHeading() . "\n";
         $str .= $this->dumpDictionary($file);

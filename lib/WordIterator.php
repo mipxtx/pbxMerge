@@ -22,7 +22,7 @@ class WordIterator implements \Iterator
      * @param string $text
      * @param $baseLineNumber
      */
-    public function __construct(string $text, $baseLineNumber) {
+    public function __construct($text, $baseLineNumber) {
         $text = str_replace(["\t"], " ", $text);
         $lineNumber = $baseLineNumber;
         foreach (explode(" ", $text) as $word) {
