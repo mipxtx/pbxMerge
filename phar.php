@@ -12,19 +12,20 @@ $array+=getFiles('lib');
 $array+=getFiles('vendor');
 $array+=getFiles('main.php');
 
+$pharFile = __DIR__ . "/build/pbx.phar";
 
-if(file_exists(__DIR__ . "/pbx.phar")){
-    unlink(__DIR__ . "/pbx.phar");
+if(file_exists($pharFile)){
+    unlink($pharFile);
 }
 
-$phar = new Phar('pbx.phar');
+$phar = new Phar($pharFile);
 $phar->startBuffering();
 $phar->buildFromIterator(new ArrayIterator($array));
 $phar->setDefaultStub('main.php');
 $phar->setStub("#!/usr/bin/php \n" . $phar->getStub());
 $phar->stopBuffering();
 
-chmod('pbx.phar', 0755);
+chmod($pharFile, 0755);
 
 function getFiles($file) {
     $path = __DIR__ . "/" . $file;
