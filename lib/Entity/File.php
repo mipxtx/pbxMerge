@@ -12,15 +12,18 @@ class File extends Dictionary
 {
     private $heading;
 
+    private $name;
+
     /**
      * File constructor.
      *
      * @param string $heading
      */
-    public function __construct($heading) {
+    public function __construct($heading, $name) {
         $this->heading = $heading;
         $this->file = $this;
         $this->parent = $this;
+        $this->name = $name;
     }
 
     /**
@@ -32,5 +35,16 @@ class File extends Dictionary
 
     public function getPath() {
         return "->";
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName() {
+        return $this->name;
+    }
+
+    public function addName($name){
+        $this->name .= " merged " . $name;
     }
 }

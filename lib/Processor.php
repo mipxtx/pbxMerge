@@ -47,7 +47,7 @@ class Processor
             $myFile = $files[$myName];
             unset($files[$myName]);
         } else {
-            $myFile = new File($original->getHeading());
+            $myFile = new File($original->getHeading(), 'new file');
         }
         $this->myFile = $myFile;
         $this->files = $files;
@@ -57,8 +57,11 @@ class Processor
 
     public function process() {
         $files = $this->files;
-        $files[] = $this->myFile;
-        $merge = $this->merge->mergeFiles($files);
+        $files[$this->myFile->getName()] = $this->myFile;
+        $merge = new File($this->original->getHeading(), 'common merge');
+        $this->merge->mergeFiles($merge, $files);
+
+
         $file = $this->compare($this->original, $merge);
 
         return $file;
@@ -113,7 +116,7 @@ class Processor
      * @return File
      */
     public function compareFiles(File $origin, File $parts) {
-        $out = new File($origin->getHeading());
+        $out = new File($origin->getHeading(), 'compare');
 
         return $this->compareDefContent($origin, $parts, $out);
     }
@@ -159,7 +162,7 @@ class Processor
                     continue;
                 }
                 $res = $this->compare($originItem, $partsItem);
-                if($res) {
+                if ($res) {
                     $container->addItem($res);
                 }
             }
@@ -217,11 +220,10 @@ class Processor
         foreach ($commonKeys as $key) {
             $orig = $originItems[$key];
             $prts = $partsItems[$key];
-            if(!$orig->equal($prts)){
+            if (!$orig->equal($prts)) {
                 $out->addItem($orig);
                 $parts->removeValue($prts);
-            }else{
-
+            } else {
             }
         }
 

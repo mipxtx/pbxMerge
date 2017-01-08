@@ -1,0 +1,66 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+		
+	};
+	objectVersion = 46;
+	objects = {
+		
+/* Begin PBXBuildFile section */
+		1F37D7B51E097CA800972D59 /* AppDelegate.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7B41E097CA800972D59 /* AppDelegate.swift */;
+		};
+		1F37D7B71E097CA800972D59 /* ViewControllerA.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7B61E097CA800972D59 /* ViewControllerA.swift */;
+		};
+		1F37D7BA1E097CA800972D59 /* Main.storyboard in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7B81E097CA800972D59 /* Main.storyboard */;
+		};
+		1F37D7BC1E097CA800972D59 /* Assets.xcassets in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7BB1E097CA800972D59 /* Assets.xcassets */;
+		};
+		1F37D7BF1E097CA800972D59 /* LaunchScreen.storyboard in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7BD1E097CA800972D59 /* LaunchScreen.storyboard */;
+		};
+		1F37D7C71E097CC300972D59 /* ViewControllerB.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7C61E097CC300972D59 /* ViewControllerB.swift */;
+		};
+		1F37D7C91E097CEA00972D59 /* ViewControllerC.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7C81E097CEA00972D59 /* ViewControllerC.swift */;
+		};
+		1F37D7E41E097EEA00972D59 /* Localizable.strings in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7E31E097EEA00972D59 /* Localizable.strings */;
+		};
+		1F37D7EC1E097FE000972D59 /* AppDelegate.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7EB1E097FE000972D59 /* AppDelegate.swift */;
+		};
+		1F37D7EE1E097FE000972D59 /* ViewController.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7ED1E097FE000972D59 /* ViewController.swift */;
+		};
+		1F37D7F11E097FE000972D59 /* Main.storyboard in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7EF1E097FE000972D59 /* Main.storyboard */;
+		};
+		1F37D7F31E097FE000972D59 /* Assets.xcassets in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7F21E097FE000972D59 /* Assets.xcassets */;
+		};
+		1F37D7F61E097FE000972D59 /* LaunchScreen.storyboard in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 1F37D7F41E097FE000972D59 /* LaunchScreen.storyboard */;
+		};
+/* End PBXBuildFile section */
+	};
+	rootObject = 1F37D7A91E097CA800972D59 /* Project object */;
+}

@@ -18,16 +18,15 @@ use PbxParser\Entity\ValueArray;
 class MergeService
 {
     /**
+     * @param File $target
      * @param File[] $files
      * @return File
      */
-    public function mergeFiles(array $files) {
-        $out = array_shift($files);
+    public function mergeFiles(File $target, array $files) {
         foreach ($files as $name => $file) {
-            $this->mergeDefineStatements($out, $file);
+            $target->addName($name);
+            $this->mergeDefineStatements($target, $file);
         }
-
-        return $out;
     }
 
     public function merge(DefineValue $target, DefineValue $object) {
@@ -46,7 +45,9 @@ class MergeService
                 $this->mergeArrays($target, $object);
                 break;
             default :
-                throw new Exception('unknown type: ' . get_class($target) . " at " . $target->getPath());
+                $ex = new Exception('unknown type: ' . get_class($target)
+                    . " at " . $target->getPath() . " on ". $target->getFile()->getName());
+                throw $ex;
         }
     }
 

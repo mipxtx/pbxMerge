@@ -2,6 +2,13 @@
 name=`git branch  | grep \* | awk '{print $2}'`
 folder=$1
 files=`./pbx.phar export --path=$folder --name=$name`
+if [ "$?" -ne "0" ]
+then
+    echo $files;
+    exit 1;
+fi
+
+
 count=0;
 for file in $files
 do

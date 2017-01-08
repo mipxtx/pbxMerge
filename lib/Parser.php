@@ -18,13 +18,15 @@ use PbxParser\Entity\Value;
 
 class Parser
 {
+    private $filename;
+
     public function parse($fileName) {
 
         $text = file_get_contents($fileName);
         $lines = explode("\n", trim($text));
         $head = array_shift($lines);
         $block = new WordIterator(implode("\n", $lines), 2);
-        $file = new File($head);
+        $file = new File($head, $fileName);
         $this->parseItems($file, $block);
         $file->initLinks($file);
 
@@ -117,7 +119,6 @@ class Parser
         }
         $block->next();
 
-
         if ($block->current() == '{') {
             $value = $this->parseList($block);
         } elseif ($block->current() == '(') {
@@ -127,6 +128,7 @@ class Parser
         }
 
         $define = new Define($key, $value);
+
         return $define;
     }
 
