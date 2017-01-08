@@ -47,4 +47,9 @@ class File extends Dictionary
     public function addName($name){
         $this->name .= " merged " . $name;
     }
+
+    public function _clone(){
+        return $this->cloneLinks(new File($this->heading, ''));
+    }
+
 }

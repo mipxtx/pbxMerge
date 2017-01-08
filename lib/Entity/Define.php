@@ -76,4 +76,8 @@ class Define implements DefineValue, DictionaryContent
             $this->value
         ];
     }
+
+    public function _clone(DefineValue $value){
+        return $this->cloneLinks(new Define($this->getKey(), $value));
+    }
 }

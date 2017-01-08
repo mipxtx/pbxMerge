@@ -40,4 +40,7 @@ class Section extends Dictionary implements DictionaryContent
         return $val->getName() == $this->getName() && parent::equal($val);
     }
 
+    public function _clone(){
+        return $this->cloneLinks(new Section($this->name));
+    }
 }

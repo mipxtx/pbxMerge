@@ -13,69 +13,117 @@ use PbxParser\Entity\Dictionary;
 use PbxParser\Entity\DefineValue;
 use PbxParser\Entity\File;
 use PbxParser\Entity\Section;
+use PbxParser\Entity\Value;
 use PbxParser\Entity\ValueArray;
 
 class MergeService
 {
     /**
-     * @param File $target
-     * @param File[] $files
-     * @return File
+     * @param DefineValue[] $objects
+     * @return mixed
+     * @throws Exception
      */
-    public function mergeFiles(File $target, array $files) {
-        foreach ($files as $name => $file) {
-            $target->addName($name);
-            $this->mergeDefineStatements($target, $file);
-        }
-    }
+    public function merge(array $objects) {
 
-    public function merge(DefineValue $target, DefineValue $object) {
-        if (get_class($target) != get_class($object)) {
-            throw new Exception('types mismatch at ' . $target->getPath());
+        $base = $objects[0];
+        $classes = [];
+
+        foreach ($objects as $object) {
+            $classes[get_class($object)] = 1;
         }
-        switch (get_class($target)) {
+
+        if (count($classes) != 1) {
+            throw new Exception('types mismatch at ' . $base->getPath());
+        }
+
+        switch (get_class($base)) {
             case Section::class:
             case Dictionary::class:
-                $this->mergeDefineStatements($target, $object);
+            case File::class:
+                return $this->mergeDictionary($objects);
                 break;
             case Define::class:
-                $this->mergeDefines($target, $object);
+                return $this->mergeDefines($objects);
                 break;
             case ValueArray::class:
-                $this->mergeArrays($target, $object);
+                return $this->mergeArrays($objects);
+                break;
+            case Value::class:
+                return $this->mergeValue($objects);
                 break;
             default :
-                $ex = new Exception('unknown type: ' . get_class($target)
-                    . " at " . $target->getPath() . " on ". $target->getFile()->getName());
+                $ex = new Exception(
+                    'unknown type: ' . get_class($base)
+                    . " at " . $base->getPath() . " on " . $base->getFile()->getName()
+                );
                 throw $ex;
         }
     }
 
-    private function mergeDefines(Define $target, Define $object) {
-        $this->merge($target->getValue(), $object->getValue());
+    /**
+     * @param Define[] $objects
+     * @return Define
+     */
+    private function mergeDefines(array $objects) {
+        $base = $objects[0];
+        $objs = [];
+        foreach ($objects as $obj) {
+            $objs[] = $obj->getValue();
+        }
+
+        return $base->_clone($this->merge($objs));
     }
 
     /**
-     * @param Dictionary $target
-     * @param Dictionary $object
-     * @throws Exception
+     * @param Dictionary[] $objects
+     * @return Dictionary
      */
-    private function mergeDefineStatements(Dictionary $target, Dictionary $object) {
-
-        foreach ($object->getItems() as $key => $value) {
-            if (!$target->hasKey($key)) {
-                $target->addItem($value);
-            } else {
-                $newTarget = $target->getByKey($key);
-                $this->merge($newTarget, $value);
+    private function mergeDictionary(array $objects) {
+        $out = $objects[0]->_clone();
+        $children = [];
+        foreach ($objects as $object) {
+            foreach ($object->getChildren() as $key => $child) {
+                $children[$key][] = $child;
             }
         }
-    }
 
-    private function mergeArrays(ValueArray $target, ValueArray $object){
-        foreach($object->getItems() as $item){
-            $target->addItem($item);
+        foreach ($children as $key => $pack) {
+            $out->addItem($this->merge($pack));
         }
+
+        return $out;
     }
 
+    /**
+     * @param ValueArray[] $objects
+     * @return ValueArray
+     */
+    private function mergeArrays(array $objects) {
+        $base = $objects[0];
+        $out = $base->_clone();
+
+        /** @var ValueArray $object */
+        foreach ($objects as $object) {
+            foreach ($object->getChildren() as $item) {
+                $out->addItem($item);
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param Value[] $objects
+     * @return Value ;
+     * @throws Exception
+     */
+    private function mergeValue(array $objects){
+        $base = $objects[0];
+
+        if(count($objects) != 1){
+            throw new Exception('trying to merge values at ' . $base->getPath());
+        }
+
+        return $base;
+    }
 }

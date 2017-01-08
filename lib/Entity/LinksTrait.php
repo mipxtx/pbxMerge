@@ -41,4 +41,18 @@ trait LinksTrait
             $child->initLinks($this);
         }
     }
+
+    public function setFile(File $file){
+        $this->file = $file;
+    }
+
+    public function setParent($parent){
+        $this->parent = $parent;
+    }
+
+    protected function cloneLinks($target){
+        $target->setFile($this->file);
+        $target->setParent($this->parent);
+        return $target;
+    }
 }

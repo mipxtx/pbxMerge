@@ -65,7 +65,7 @@ class ValueArray implements DefineValue
     }
 
     /**
-     * @return DefineValue[]
+     * @return Value[]
      */
     public function getChildren() {
         return $this->items;
@@ -80,5 +80,13 @@ class ValueArray implements DefineValue
                 return;
             }
         }
+    }
+
+    /**
+     * @return ValueArray
+     */
+    public function _clone(){
+        return $this->cloneLinks(new ValueArray());
+
     }
 }

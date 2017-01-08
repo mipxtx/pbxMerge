@@ -93,4 +93,8 @@ class Dictionary implements DefineValue
     public function getChildren() {
         return $this->items;
     }
+
+    public function _clone(){
+        return $this->cloneLinks(new Dictionary());
+    }
 }
