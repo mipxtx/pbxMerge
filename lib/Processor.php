@@ -26,11 +26,6 @@ class Processor
     /**
      * @var File
      */
-    private $myFile;
-
-    /**
-     * @var File
-     */
     private $files = [];
 
     private $merge;
@@ -40,28 +35,16 @@ class Processor
      *
      * @param File $original
      * @param File[] $files
+     * @param $myName
      */
     public function __construct(File $original, array $files, $myName) {
         $this->original = $original;
-        if (isset($files[$myName])) {
-            $myFile = $files[$myName];
-            unset($files[$myName]);
-        } else {
-            $myFile = new File($original->getHeading(), 'new file');
-        }
-        $this->myFile = $myFile;
         $this->files = $files;
-
         $this->merge = new MergeService();
     }
 
     public function process() {
-        $files = $this->files;
-        $files[$this->myFile->getName()] = $this->myFile;
-        $merge = new File($this->original->getHeading(), 'common merge');
-        $this->merge->mergeFiles($merge, $files);
-
-
+        $merge = $this->merge->merge($this->files);
         $file = $this->compare($this->original, $merge);
 
         return $file;

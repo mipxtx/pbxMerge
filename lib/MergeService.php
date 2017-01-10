@@ -36,6 +36,12 @@ class MergeService
             throw new Exception('types mismatch at ' . $base->getPath());
         }
 
+        if (!is_object($base)) {
+            echo (new Exception())->getTraceAsString() . "\n";
+
+            throw new Exception('expects DefineValue, got ' . var_export($base, 1));
+        }
+
         switch (get_class($base)) {
             case Section::class:
             case Dictionary::class:
@@ -117,10 +123,10 @@ class MergeService
      * @return Value ;
      * @throws Exception
      */
-    private function mergeValue(array $objects){
+    private function mergeValue(array $objects) {
         $base = $objects[0];
 
-        if(count($objects) != 1){
+        if (count($objects) != 1) {
             throw new Exception('trying to merge values at ' . $base->getPath());
         }
 

@@ -53,14 +53,17 @@ class Service
             $files[$file] = $parser->parse($partsDir . "/" . $file);
         }
 
+        print_r(array_keys($files));
+
         $processor = new Processor($origin, $files, $name);
+
         $out = $processor->process();
 
         if ($out) {
             error_log('changes: ' . $dumper->dump($out));
             if (isset($files[$name])) {
                 error_log("merged changes to $name");
-                 $merge->mergeFiles($files[$name], [$out]);
+                $files[$name] = $merge->merge([$files[$name], $out]);
             } else {
                 error_log("new file $name");
                 $files[$name] = $out;
