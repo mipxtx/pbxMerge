@@ -58,12 +58,9 @@ class Service
         $out = $processor->process();
 
         if ($out) {
-            error_log('changes: ' . $dumper->dump($out));
             if (isset($files[$name])) {
-                error_log("merged changes to $name");
                 $files[$name] = $merge->merge([$files[$name], $out]);
             } else {
-                error_log("new file $name");
                 $files[$name] = $out;
             }
         }
@@ -75,7 +72,6 @@ class Service
             $origin = file_exists($fileName) ? file_get_contents($fileName) : "";
             $text = $dumper->dump($file);
             if ($origin != $text) {
-                error_log('dumping ' . $file->getName() . ' as ' . $name);
                 $out[] = $fileName;
                 file_put_contents($fileName, $text);
             }
@@ -121,13 +117,10 @@ class Service
         return $dir;
     }
 
-
-    private function dumpDiff($name, File $file){
+    private function dumpDiff($name, File $file) {
         $dumper = new Dumper();
         $tmp = tempnam("/tmp", 'diff');
         file_put_contents($tmp, $dumper->dump($file));
-        error_log(`diff -u $name $tmp`);
         unlink($tmp);
-
     }
 }
