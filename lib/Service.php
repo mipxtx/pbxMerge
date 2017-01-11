@@ -53,8 +53,6 @@ class Service
             $files[$file] = $parser->parse($partsDir . "/" . $file);
         }
 
-        print_r(array_keys($files));
-
         $processor = new Processor($origin, $files, $name);
 
         $out = $processor->process();

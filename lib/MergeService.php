@@ -39,8 +39,6 @@ class MergeService
         }
 
         if (!is_object($base)) {
-            echo (new Exception())->getTraceAsString() . "\n";
-
             throw new Exception('expects DefineValue, got ' . var_export($base, 1));
         }
 
