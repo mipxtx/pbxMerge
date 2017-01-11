@@ -94,9 +94,7 @@ class Service
             }
         }
 
-        $dump = new File($files[0]->getHeading(), 'dump');
-
-        $merge->mergeFiles($dump, $files);
+        $dump = $merge->merge($files);
 
         file_put_contents($this->getFullPath($path) . "/" . self::FILE_NAME, $dumper->dump($dump));
 
