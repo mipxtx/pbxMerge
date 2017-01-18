@@ -9,7 +9,6 @@
 namespace PbxParser;
 
 use PbxParser\Entity\Define;
-use PbxParser\Entity\DefineValue;
 use PbxParser\Entity\ValueArray;
 use PbxParser\Entity\Dictionary;
 use PbxParser\Entity\File;
@@ -18,14 +17,17 @@ use PbxParser\Entity\Value;
 
 class Parser
 {
-    private $filename;
-
     public function parse($fileName) {
-
         $text = file_get_contents($fileName);
+
+        return $this->parseString($text, $fileName);
+    }
+
+    public function parseString($text, $fileName = "") {
         $lines = explode("\n", trim($text));
         $head = array_shift($lines);
         $block = new WordIterator(implode("\n", $lines), 2);
+
         $file = new File($head, $fileName);
         $this->parseItems($file, $block);
         $file->initLinks($file);
@@ -138,8 +140,7 @@ class Parser
      */
     public function parseValue(WordIterator $block) {
         $key = $block->current();
-
-        if (substr_count($key, '"') == 1) {
+        if (substr_count($key, '"') - substr_count($key, '\"')  == 1) {
             do {
                 $current = $block->getNext();
                 $key .= " " . $current;
@@ -151,7 +152,7 @@ class Parser
         if ($next == '/*') {
             $comment = $this->parseComment($block);
         }
-
-        return new Value($key, $comment);
+        $ret = new Value($key, $comment);
+        return $ret;
     }
 }

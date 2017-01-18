@@ -23,55 +23,64 @@ class WordIterator implements \Iterator
      * @param $baseLineNumber
      */
     public function __construct($text, $baseLineNumber) {
-        $text = str_replace(["\t"], " ", $text);
+
+        $word = '';
+        $isString = false;
+        $pre = "";
         $lineNumber = $baseLineNumber;
-        foreach (explode(" ", $text) as $word) {
-            if ($word) {
-                $lines = explode("\n", $word);
-                $first = array_shift($lines);
-                $this->addWord($first, $lineNumber);
-                foreach ($lines as $line) {
-                    $lineNumber++;
-                    $this->addWord($line, $lineNumber);
+
+        foreach (str_split($text) as $char) {
+
+            if ($isString) {
+                if ($char == '"' && $pre != '\\') {
+                    $word .= $char;
+                    $this->addWord($word, $lineNumber);
+                    $isString = false;
+                } else {
+                    $word .= $char;
+                }
+            } else {
+                switch ((string)$char) {
+                    case " " :
+                    case "\t" :
+                        $this->addWord($word, $lineNumber);
+                        break;
+                    case "\n" :
+                        $this->addWord($word, $lineNumber);
+                        $lineNumber++;
+                        break;
+                    case ";":
+                    case "}":
+                    case "{":
+                    case "=":
+                    case ",":
+                    case "(":
+                    case ")":
+                        $this->addWord($word, $lineNumber);
+                        $this->addWord($char, $lineNumber);
+                        break;
+                    case '"' :
+                        $this->addWord($word, $lineNumber);
+                        $word .= $char;
+                        $isString = true;
+                        break;
+                    default:
+                        $word = $word . $char;
+                        break;
                 }
             }
+            $pre = $char;
         }
     }
 
-    private function addWord($word, $lineNumber) {
-        if (!$word) {
+    private function addWord(&$word, $lineNumber) {
+        if ($word === '') {
             return;
         }
 
-        if ($word[0] == '{') {
-            $this->appendWord('{', $lineNumber);
-            $word = ltrim($word, '{');
-            if (!$word) {
-                return;
-            }
-        }
-
-        $hasEnd = false;
-
-        foreach ([';', ','] as $char) {
-            if ($word[mb_strlen($word) - 1] == $char) {
-                $word = rtrim($word, $char);
-                if ($word !== '') {
-                    $this->appendWord($word, $lineNumber);
-                }
-                $this->appendWord($char, $lineNumber);
-                $hasEnd = true;
-                break;
-            }
-        }
-        if (!$hasEnd) {
-            $this->appendWord($word, $lineNumber);
-        }
-    }
-
-    private function appendWord($word, $lineNumber) {
         $this->words[] = $word;
-        $this->lineNumbers[count($this->words)-1] = $lineNumber;
+        $this->lineNumbers[count($this->words) - 1] = $lineNumber;
+        $word = "";
     }
 
     public function next() {
