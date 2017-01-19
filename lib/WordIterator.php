@@ -28,9 +28,10 @@ class WordIterator implements \Iterator
         $isString = false;
         $pre = "";
         $lineNumber = $baseLineNumber;
+        $length = mb_strlen($text);
 
-        foreach (str_split($text) as $char) {
-
+        for ($i = 0; $i < $length; $i++) {
+            $char = $text[$i];
             if ($isString) {
                 if ($char == '"' && $pre != '\\') {
                     $word .= $char;

@@ -24,9 +24,6 @@ class MergeService
      * @throws Exception
      */
     public function merge(array $objects) {
-
-
-
         $base = $objects[0];
         $classes = [];
 

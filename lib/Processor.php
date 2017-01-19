@@ -44,7 +44,11 @@ class Processor
     }
 
     public function process() {
-        $merge = $this->merge->merge(array_values($this->files));
+        if($this->files) {
+            $merge = $this->merge->merge(array_values($this->files));
+        }else{
+            $merge = new File($this->original->getHeading(), '');
+        }
         $file = $this->compare($this->original, $merge);
 
         return $file;

@@ -36,6 +36,8 @@ class Service
         if (!file_exists($path)) {
             throw new Exception('file not found:' . $path);
         }
+
+        $timeStart = microtime(1);
         $origin = $parser->parse($path);
 
         /** @var File[] $files */
@@ -53,9 +55,13 @@ class Service
             $files[$file] = $parser->parse($partsDir . "/" . $file);
         }
 
+        $timeParse = microtime(1);
+
         $processor = new Processor($origin, $files, $name);
 
         $out = $processor->process();
+
+        $timeProcess = microtime(1);
 
         if ($out) {
             if (isset($files[$name])) {
@@ -64,7 +70,7 @@ class Service
                 $files[$name] = $out;
             }
         }
-
+        $timeMerge = microtime(1);
         $out = [];
 
         foreach ($files as $name => $file) {
@@ -76,6 +82,12 @@ class Service
                 file_put_contents($fileName, $text);
             }
         }
+        $timeDump = microtime(1);
+
+        echo "parse:" . round($timeParse - $timeStart,2) . "s\n";
+        echo "process:" . round($timeProcess- $timeParse,2) . "s\n";
+        echo "merge:" . round($timeMerge - $timeProcess,2) . "s\n";
+        echo "dump:" . round($timeDump - $timeMerge,2) . "s\n";
 
         return $out;
     }
