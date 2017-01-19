@@ -23,7 +23,10 @@ class WordIterator implements \Iterator
      * @param $baseLineNumber
      */
     public function __construct($text, $baseLineNumber) {
+        $this->parseSymbols($text, $baseLineNumber);
+    }
 
+    private function parseSymbols($text, $baseLineNumber){
         $word = '';
         $isString = false;
         $pre = "";
@@ -73,6 +76,7 @@ class WordIterator implements \Iterator
             $pre = $char;
         }
     }
+
 
     private function addWord(&$word, $lineNumber) {
         if ($word === '') {
