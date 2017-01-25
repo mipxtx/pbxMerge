@@ -2,19 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: mix
- * Date: 21.12.16
- * Time: 16:21
+ * Date: 19.01.17
+ * Time: 23:41
  */
 
-namespace PbxParser;
+namespace PbxParser\Tokenizer;
 
-class WordIterator implements \Iterator
+class SymbolTokenizer extends Tokenizer
 {
-    private $words = [];
-
-    private $lineNumbers = [];
-
-    private $current = 0;
 
     /**
      * LineIterator constructor.
@@ -22,11 +17,11 @@ class WordIterator implements \Iterator
      * @param string $text
      * @param $baseLineNumber
      */
-    public function __construct($text, $baseLineNumber) {
+    public function __construct(string $text, $baseLineNumber) {
         $this->parseSymbols($text, $baseLineNumber);
     }
 
-    private function parseSymbols($text, $baseLineNumber){
+    private function parseSymbols(string $text, $baseLineNumber) {
         $word = '';
         $isString = false;
         $pre = "";
@@ -77,7 +72,6 @@ class WordIterator implements \Iterator
         }
     }
 
-
     private function addWord(&$word, $lineNumber) {
         if ($word === '') {
             return;
@@ -86,50 +80,5 @@ class WordIterator implements \Iterator
         $this->words[] = $word;
         $this->lineNumbers[count($this->words) - 1] = $lineNumber;
         $word = "";
-    }
-
-    public function next() {
-        $this->current++;
-    }
-
-    public function current() {
-        return $this->words[$this->current];
-    }
-
-    public function key() {
-        return $this->current;
-    }
-
-    public function total() {
-        return count($this->words);
-    }
-
-    public function valid() {
-        return array_key_exists($this->current, $this->words);
-    }
-
-    public function rewind() {
-        $this->current = 0;
-    }
-
-    public function getNext() {
-        $this->next();
-
-        return $this->current();
-    }
-
-    public function debug() {
-        echo 'at line: ' . $this->lineNumbers[$this->current] . "\n";
-
-        for ($i = $this->current - 2; $i < $this->current; $i++) {
-            echo $this->words[$i] . " ";
-        }
-        echo "\033[1m" . $this->words[$this->current] . "\033[0m ";
-
-        for ($i = $this->current + 1; $i < $this->current + 3; $i++) {
-            echo $this->words[$i] . " ";
-        }
-
-        echo "\n";
     }
 }

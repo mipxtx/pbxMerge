@@ -14,9 +14,24 @@ use PbxParser\Entity\Dictionary;
 use PbxParser\Entity\File;
 use PbxParser\Entity\Section;
 use PbxParser\Entity\Value;
+use PbxParser\Tokenizer\PhpTokenizer;
+use PbxParser\Tokenizer\SymbolTokenizer;
+use PbxParser\Tokenizer\Tokenizer;
+use PbxParser\Tokenizer\WordTokenizer;
 
 class Parser
 {
+    private $type;
+
+    /**
+     * Parser constructor.
+     *
+     * @param $type
+     */
+    public function __construct($type = 'php') {
+        $this->type = $type;
+    }
+
     public function parse($fileName) {
         $text = file_get_contents($fileName);
 
@@ -26,7 +41,19 @@ class Parser
     public function parseString($text, $fileName = "") {
         $lines = explode("\n", trim($text));
         $head = array_shift($lines);
-        $block = new WordIterator(implode("\n", $lines), 2);
+        switch ($this->type) {
+            case 'symbol':
+                $block = new SymbolTokenizer(implode("\n", $lines), 2);
+                break;
+            case 'word' :
+                $block = new WordTokenizer($lines, 2);
+                break;
+            case 'php':
+                $block = new PhpTokenizer(implode("\n", $lines), 1);
+                break;
+            default:
+                throw new \Exception('tokenizer not found');
+        }
 
         $file = new File($head, $fileName);
         $this->parseItems($file, $block);
@@ -36,10 +63,10 @@ class Parser
     }
 
     /**
-     * @param WordIterator $block
+     * @param Tokenizer $block
      * @return Dictionary
      */
-    public function parseList(WordIterator $block) {
+    public function parseList(Tokenizer $block) {
         $list = new Dictionary();
         $this->parseItems($list, $block);
 
@@ -47,10 +74,10 @@ class Parser
     }
 
     /**
-     * @param WordIterator $block
+     * @param Tokenizer $block
      * @return ValueArray
      */
-    public function parseArray(WordIterator $block) {
+    public function parseArray(Tokenizer $block) {
 
         $result = new ValueArray();
         $block->next();
@@ -65,20 +92,23 @@ class Parser
         return $result;
     }
 
-    public function parseItems(Dictionary $container, WordIterator $block) {
+    public function parseItems(Dictionary $container, Tokenizer $block) {
         // {
         $block->next();
 
         /** @var Section $currentSection */
         $currentSection = null;
         while ($block->current() != "}" && $block->valid()) {
-            if ($block->current() == "/*") {
+            if (strpos($block->current(), "/*") === 0) {
                 $coment = $this->parseComment($block);
                 if (preg_match('/Begin ([A-Za-z]+) section/', $coment, $out)) {
                     $currentSection = new Section($out[1]);
                     $container->addItem($currentSection);
                 } elseif (preg_match('/End ([A-Za-z]+) section/', $coment, $out)) {
                     $currentSection = null;
+                }else{
+                    // ;/,
+                    $block->next();
                 }
             } else {
                 $item = $this->parseDefine($block);
@@ -90,17 +120,21 @@ class Parser
                 // ;/,
                 $block->next();
             }
+
         }
         // }
         $block->next();
     }
 
-    public function parseComment(WordIterator $block) {
-        $text = [];
-        $block->next();
-        do {
-            $text[] = $block->current();
-        } while ($block->getNext() != '*/');
+    public function parseComment(Tokenizer $block) {
+
+        $word = $block->current();
+        $text = [$word];
+
+        while (strpos($word, '*/') === false) {
+            $word = $block->getNext();
+            $text[] = $word;
+        }
 
         $block->next();
 
@@ -108,14 +142,15 @@ class Parser
     }
 
     /**
-     * @param WordIterator $block
+     * @param Tokenizer $block
      * @return Define
      * @throws Exception
      */
-    public function parseDefine(WordIterator $block) {
+    public function parseDefine(Tokenizer $block) {
+
         $key = $this->parseValue($block);
+
         if ($block->current() != "=") {
-            var_dump($key);
             $block->debug();
             throw new Exception('eq not found');
         }
@@ -135,12 +170,13 @@ class Parser
     }
 
     /**
-     * @param WordIterator $block
+     * @param Tokenizer $block
      * @return Value
      */
-    public function parseValue(WordIterator $block) {
+    public function parseValue(Tokenizer $block) {
         $key = $block->current();
-        if (substr_count($key, '"') - substr_count($key, '\"')  == 1) {
+
+        if (substr_count($key, '"') - substr_count($key, '\"') == 1) {
             do {
                 $current = $block->getNext();
                 $key .= " " . $current;
@@ -148,11 +184,14 @@ class Parser
         }
 
         $next = $block->getNext();
+
         $comment = null;
-        if ($next == '/*') {
+        if (strpos($next, '/*') === 0) {
             $comment = $this->parseComment($block);
+
         }
         $ret = new Value($key, $comment);
+
         return $ret;
     }
 }

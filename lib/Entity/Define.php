@@ -8,7 +8,9 @@
 
 namespace PbxParser\Entity;
 
-class Define implements DefineValue, DictionaryContent
+use PbxParser\LoggerElement;
+
+class Define implements DefineValue, DictionaryContent, LoggerElement
 {
     use LinksTrait;
 
@@ -79,5 +81,9 @@ class Define implements DefineValue, DictionaryContent
 
     public function _clone(DefineValue $value){
         return $this->cloneLinks(new Define($this->getKey(), $value));
+    }
+
+    public function getLoggerId() {
+        return $this->getKey()->getValue();
     }
 }

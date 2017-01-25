@@ -23,29 +23,41 @@ class Dumper
 
     private $forceDict = true;
 
+    private $skipEmpty = true;
+
     const MAX_LENGTH = 150;
+
+    private $logger;
 
     public function __construct($forceDict = true, $forceArray = true) {
         $this->forceArray = $forceArray;
         $this->forceDict = $forceDict;
+        $this->logger = new Logger();
     }
 
     public function dump(File $file) {
-        $str = $file->getHeading() . "\n";
-        $str .= $this->dumpDictionary($file);
+        $content = $this->dumpDictionary($file);
+        if ($this->skipEmpty && !$content) {
+            return "";
+        }
 
-        return $str . "\n";
+        return $file->getHeading() . "\n" . $this->dumpDictionary($file) . "\n";
     }
 
     public function dumpSection(Section $section) {
-        $ret = "\n/* Begin " . $section->getName() . " section */\n";
         $out = [];
 
         foreach ($section->getItems() as $item) {
-            $str = $this->getIdent($this->level) . $this->dumpDefineValue($item);
-            $out[] = $str;
+            $str = $this->getIdent() . $this->dumpDefineValue($item);
+            if ($str) {
+                $out[] = $str;
+            }
+        }
+        if ($this->skipEmpty && !$out) {
+            return "";
         }
 
+        $ret = "\n/* Begin " . $section->getName() . " section */\n";
         $ret .= implode("\n", $out);
         $ret .= "\n/* End " . $section->getName() . " section */";
 
@@ -54,18 +66,28 @@ class Dumper
 
     public function dumpDefine(Define $define) {
         $ret = "";
-        $ret .= $this->dumpValue($define->getKey()) . " = " . $this->dumpDefineValue($define->getValue()) . ";";
+        $val = $this->dumpDefineValue($define->getValue());
+
+        if (!$val && $this->skipEmpty) {
+            return "";
+        }
+        $ret .= $this->dumpValue($define->getKey()) . " = " . $val . ";";
 
         return $ret;
     }
 
     public function dumpValue(Value $value) {
-        return $value->getValue() . ($value->getComment() ? " /* " . $value->getComment() . " */" : "");
+        return $value->getValue() . ($value->getComment() ? " " . $value->getComment() : "");
     }
 
     public function dumpValueArray(ValueArray $va) {
+
+        if (!$va->getChildren() && $this->skipEmpty) {
+            return "";
+        }
+
         $ret = "(";
-        $this->level++;
+        $this->incLevel();
         $out = [];
         $va->resort();
         foreach ($va->getItems() as $item) {
@@ -74,16 +96,16 @@ class Dumper
         $str = implode(", ", $out) . ",";
         $ident = "";
         if (mb_strlen($str) > self::MAX_LENGTH || $this->forceArray) {
-            $ident = "\n" . $this->getIdent($this->level);
+            $ident = "\n" . $this->getIdent();
             $str = implode("," . $ident, $out);
             if ($out) {
                 $str = $ident . $str . ",";
             }
         }
         $ret .= $str;
-        $this->level--;
+        $this->decLevel();
         if ($ident) {
-            $ret .= "\n" . $this->getIdent($this->level);
+            $ret .= "\n" . $this->getIdent();
         }
         $ret .= ")";
 
@@ -91,26 +113,36 @@ class Dumper
     }
 
     public function dumpDictionary(Dictionary $ds) {
-        $ret = '{';
-        $this->level++;
         $out = [];
 
+        $ret = '{';
+        $this->incLevel();
+
         foreach ($ds->getItems() as $item) {
-            $out[] = $this->dumpDefineValue($item);
+            $str = $this->dumpDefineValue($item);
+            if ($str) {
+                $out[] = $str;
+            }
         }
+
+        if ($this->skipEmpty && !$out) {
+            $this->decLevel();
+            return "";
+        }
+
         $str = implode(' ', $out) . " ";
 
         $ident = "";
         if (mb_strlen($str) > self::MAX_LENGTH || strpos($str, "\n") !== false || $this->forceDict) {
-            $ident = $this->getIdent($this->level);
+            $ident = $this->getIdent();
             $str = "\n{$ident}" . implode("\n{$ident}", $out);
         }
 
         $ret .= $str;
-        $this->level--;
+        $this->decLevel();
 
         if ($ident) {
-            $ret .= "\n" . $this->getIdent($this->level);
+            $ret .= "\n" . $this->getIdent();
         }
         $ret .= "}";
 
@@ -134,12 +166,23 @@ class Dumper
         }
     }
 
-    public function getIdent($count) {
+    public function getIdent() {
         $out = "";
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $this->level; $i++) {
             $out .= "\t";
         }
 
         return $out;
     }
+
+    private function incLevel(){
+        $this->level++;
+    }
+
+    private function decLevel(){
+        $this->level --;
+    }
+
+
+
 }
