@@ -183,18 +183,27 @@ EXP;
             throw new Exception('you should run setup at the same folder as pbx.phar');
         }
 
+        exec('git --version', $out,$return);
+        if($return){
+            throw new Exception('git not found (git --version failed).');
+        }
+
         if (!file_exists($cpath . '/.git')) {
-            throw new Exception('you should put pbx.phar at the root of git repo');
+            throw new Exception('you should put pbx.phar at the root of your git repo');
         }
 
         foreach ($files as $name => $text) {
-            file_put_contents($cpath . "/" . $name, str_replace(':path:', $path, $text));
-            chmod($cpath . "/" . $name, 0775);
+            $file = $cpath . "/" . $name;
+            file_put_contents($file, str_replace(':path:', $path, $text));
+            chmod($file, 0775);
+            exec('git add ' . $file);
         }
 
         $this->link('pre-commit', 'export');
         $this->link('post-merge', 'import');
         $this->link('post-checkout', 'import');
+
+        exec('git add pbx.phar');
     }
 
     private function link($hook, $name) {
