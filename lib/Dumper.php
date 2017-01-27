@@ -48,9 +48,9 @@ class Dumper
         $out = [];
 
         foreach ($section->getItems() as $item) {
-            $str = $this->getIdent() . $this->dumpDefineValue($item);
+            $str = $this->dumpDefineValue($item);
             if ($str) {
-                $out[] = $str;
+                $out[] = $this->getIdent() . $str;
             }
         }
         if ($this->skipEmpty && !$out) {
@@ -65,13 +65,12 @@ class Dumper
     }
 
     public function dumpDefine(Define $define) {
-        $ret = "";
         $val = $this->dumpDefineValue($define->getValue());
 
-        if (!$val && $this->skipEmpty) {
+        if ($val === "" && $this->skipEmpty) {
             return "";
         }
-        $ret .= $this->dumpValue($define->getKey()) . " = " . $val . ";";
+        $ret = $this->dumpValue($define->getKey()) . " = " . $val . ";";
 
         return $ret;
     }
@@ -82,10 +81,6 @@ class Dumper
 
     public function dumpValueArray(ValueArray $va) {
 
-        if (!$va->getChildren() && $this->skipEmpty) {
-            return "";
-        }
-
         $ret = "(";
         $this->incLevel();
         $out = [];
@@ -93,6 +88,13 @@ class Dumper
         foreach ($va->getItems() as $item) {
             $out[] = $this->dumpValue($item);
         }
+
+        if (!$out && $this->skipEmpty) {
+            $this->decLevel();
+
+            return "";
+        }
+
         $str = implode(", ", $out) . ",";
         $ident = "";
         if (mb_strlen($str) > self::MAX_LENGTH || $this->forceArray) {
@@ -127,6 +129,7 @@ class Dumper
 
         if ($this->skipEmpty && !$out) {
             $this->decLevel();
+
             return "";
         }
 
@@ -175,14 +178,11 @@ class Dumper
         return $out;
     }
 
-    private function incLevel(){
+    private function incLevel() {
         $this->level++;
     }
 
-    private function decLevel(){
-        $this->level --;
+    private function decLevel() {
+        $this->level--;
     }
-
-
-
 }

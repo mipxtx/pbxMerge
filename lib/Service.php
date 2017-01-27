@@ -28,10 +28,6 @@ class Service
 
         $dir = $this->getFullPath($path);
 
-        if (!is_dir($dir)) {
-            $dir = dirname($dir);
-        }
-
         $path = $dir . "/" . self::FILE_NAME;
         if (!file_exists($path)) {
             throw new Exception('file not found:' . $path);
@@ -84,10 +80,10 @@ class Service
         }
         $timeDump = microtime(1);
 
-        echo "parse:" . round($timeParse - $timeStart,2) . "s\n";
-        echo "process:" . round($timeProcess- $timeParse,2) . "s\n";
-        echo "merge:" . round($timeMerge - $timeProcess,2) . "s\n";
-        echo "dump:" . round($timeDump - $timeMerge,2) . "s\n";
+        //echo "parse:" . round($timeParse - $timeStart,2) . "s\n";
+        //echo "process:" . round($timeProcess- $timeParse,2) . "s\n";
+        //echo "merge:" . round($timeMerge - $timeProcess,2) . "s\n";
+        //echo "dump:" . round($timeDump - $timeMerge,2) . "s\n";
 
         return $out;
     }
@@ -100,10 +96,18 @@ class Service
         $dir = $this->getFullPath($path) . "/" . self::PARTS_DIR . "/";
         $files = [];
 
+        if (!file_exists($dir)) {
+            throw new Exception('parts dir not found. use export first');
+        }
+
         foreach (scandir($dir) as $file) {
             if ($file[0] != ".") {
                 $files[] = $parser->parse($dir . $file);
             }
+        }
+
+        if (!$files) {
+            throw new Exception('parts not found. use export first');
         }
 
         $dump = $merge->merge($files);
@@ -123,6 +127,9 @@ class Service
             }
         }
         $dir = realpath($dir);
+        if (!is_dir($dir)) {
+            $dir = dirname($dir);
+        }
 
         return $dir;
     }
@@ -133,4 +140,71 @@ class Service
         file_put_contents($tmp, $dumper->dump($file));
         unlink($tmp);
     }
+
+    public function setup($path) {
+        $files['export'] = <<<'EXP'
+#!/bin/bash
+name=`git branch  | grep \* | awk '{print $2}'`
+folder=:path:
+files=`./pbx.phar export --path=$folder --name=$name`
+if [ "$?" -ne "0" ]
+then
+    echo $files;
+    exit 1;
+fi
+
+
+count=0;
+for file in $files
+do
+	git add $file
+	count=`expr $count + 1`
+done;
+
+if [ "$count" -ne "0" ]
+then 
+	echo "pbx changed & files add to git index";
+	exit 1;
+fi
+EXP;
+
+        $files['import'] = <<<'EXP'
+#!/bin/bash
+./pbx.phar import --path=:path:
+EXP;
+
+        $cpath = getcwd();
+
+        if (!file_exists($cpath . "/" . $path)) {
+            throw new Exception('file not found: ' . $path);
+        }
+
+        if (!file_exists($cpath . "/pbx.phar")) {
+            throw new Exception('you should run setup at the same folder as pbx.phar');
+        }
+
+        if (!file_exists($cpath . '/.git')) {
+            throw new Exception('you should put pbx.phar at the root of git repo');
+        }
+
+        foreach ($files as $name => $text) {
+            file_put_contents($cpath . "/" . $name, str_replace(':path:', $path, $text));
+            chmod($cpath . "/" . $name, 0775);
+        }
+
+        $this->link('pre-commit', 'export');
+        $this->link('post-merge', 'import');
+        $this->link('post-checkout', 'import');
+    }
+
+    private function link($hook, $name) {
+        $link = getcwd() . "/.git/hooks/{$hook}";
+
+        if (file_exists($link)) {
+            unlink($link);
+        }
+        symlink("../../{$name}", $link);
+    }
 }
+
+

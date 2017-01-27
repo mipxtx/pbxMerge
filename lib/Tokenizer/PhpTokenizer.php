@@ -12,7 +12,7 @@ class PhpTokenizer extends Tokenizer
 {
     private $symbols = ['{', '}', '(', ')', ';', ',', '='];
 
-    public function __construct(string $string, $base) {
+    public function __construct($string, $base) {
         $tokens = token_get_all("<?php " . $string);
         array_shift($tokens);
         $word = "";

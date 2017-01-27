@@ -1,2 +1,0 @@
-#!/bin/bash
-./pbx.phar import --path=$1
