@@ -20,19 +20,12 @@ Merge process operates in two stages
 
 `cd you/project;`
 
-`mkdir -p .git/hooks;`
+`chmod 775 pbx.phar;`
 
-`echo './export path/to/project.pbxproj' > .git/hooks/pre-commit;`
+`./pbx.par setup --path=path\to\project.pbxproj`
 
-`echo './import path/to/project.pbxproj'>.git/hooks/post-merge; chmod 775 .git/hooks/post-merge;`
-
-`chmod 775 pbx.phar export import .git/hooks/pre-commit .git/hooks/post-merge;`
 
 ###description
 
 The best way to use utility is to use it with git hooks.
-At the build folder you can find pbx.phar utility and import/export bash scripts, that can help use utility with hooks. This files shoud be stored at the root of your project (because hooks works on it). import/export scripts requires 1 parameter - path to the project.pbxproj file.
-
-1. pre-commit hook starts a diff processing and stop commit process on changes at diff. In this case you can see the changes at diffs and commit you code again with a new diff. Put the pre-commit file at the .git/hooks folder of your project with call of export script: `echo './export path/to/project.pbxproj' > .git/hooks/pre-commit; chmod 775 .git/hooks/pre-commit ` 
-2. post-merge hook start project file assembly with the diff files. `echo './import path/to/project.pbxproj'>.git/hooks/post-merge; chmod 775 .git/hooks/post-merge`    
-
+You can use setup option of utility, that can generate you all neded hooks 
