@@ -8,6 +8,7 @@
 
 namespace PbxParser\Command;
 
+use PbxParser\Exception;
 use PbxParser\Service;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,8 +29,7 @@ class Setup extends AbstractCommand
         $path =  $input->getOption('path');
 
         if (!$path) {
-            $output->writeln('path required, use "find . | grep project.pbxproj" to find it');
-            return 1;
+            throw new Exception('path required, use "find . | grep project.pbxproj" to find it');
         }
         $service->setup($path);
         return 0;

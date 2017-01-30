@@ -97,7 +97,7 @@ class Service
         $files = [];
 
         if (!file_exists($dir)) {
-            throw new Exception('parts dir not found. use export first');
+            throw new Exception('parts dir not found at ' . $this->getFullPath($path) . '. use export first');
         }
 
         foreach (scandir($dir) as $file) {
@@ -107,7 +107,7 @@ class Service
         }
 
         if (!$files) {
-            throw new Exception('parts not found. use export first');
+            throw new Exception('parts not found at ' . $this->getFullPath($path) . '. use export first');
         }
 
         $dump = $merge->merge($files);
@@ -126,7 +126,7 @@ class Service
                 $dir .= $path;
             }
         }
-        $dir = realpath($dir);
+        //$dir = realpath($dir);
         if (!is_dir($dir)) {
             $dir = dirname($dir);
         }
@@ -173,6 +173,12 @@ EXP;
 ./pbx.phar import --path=:path:
 EXP;
 
+        $files['setup'] = <<<'EXP'
+#!/bin/bash
+./pbx.phar setup --path=:path:
+EXP;
+
+
         $cpath = getcwd();
 
         if (!file_exists($cpath . "/" . $path)) {
@@ -183,8 +189,8 @@ EXP;
             throw new Exception('you should run setup at the same folder as pbx.phar');
         }
 
-        exec('git --version', $out,$return);
-        if($return){
+        exec('git --version', $out, $return);
+        if ($return) {
             throw new Exception('git not found (git --version failed).');
         }
 
@@ -200,6 +206,7 @@ EXP;
         }
 
         $this->link('pre-commit', 'export');
+        $this->link('pre-checkout', 'export');
         $this->link('post-merge', 'import');
         $this->link('post-checkout', 'import');
 

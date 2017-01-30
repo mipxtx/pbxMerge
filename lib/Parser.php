@@ -164,7 +164,8 @@ class Parser
             $value = $this->parseValue($block);
         }
 
-        $define = new Define($key, $value);
+        $define = new Define();
+        $define->init($key, $value);
 
         return $define;
     }

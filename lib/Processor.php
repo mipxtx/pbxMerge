@@ -30,6 +30,8 @@ class Processor
 
     private $merge;
 
+    private $file;
+
     /**
      * Processor constructor.
      *
@@ -44,12 +46,13 @@ class Processor
     }
 
     public function process() {
-        if($this->files) {
+        $this->file = null;
+        if ($this->files) {
             $merge = $this->merge->merge(array_values($this->files));
-        }else{
+        } else {
             $merge = new File($this->original->getHeading(), '');
         }
-        $file = $this->compare($this->original, $merge);
+        $file = $this->compare($this->original, $merge, null);
 
         return $file;
     }
@@ -60,7 +63,7 @@ class Processor
      * @return null|DefineValue
      * @throws Exception
      */
-    public function compare(DefineValue $origin, DefineValue $parts) {
+    public function compare(DefineValue $origin, DefineValue $parts, $parent) {
         if ($origin->equal($parts)) {
             return null;
         } else {
@@ -71,13 +74,13 @@ class Processor
                 case File::class:
                     return $this->compareFiles($origin, $parts);
                 case Define::class :
-                    return $this->compareDefine($origin, $parts);
+                    return $this->compareDefine($origin, $parts, $parent);
                 case Dictionary::class:
-                    return $this->compareDefineStatements($origin, $parts);
+                    return $this->compareDefineStatements($origin, $parts, $parent);
                 case Section::class:
-                    return $this->compareSections($origin, $parts);
+                    return $this->compareSections($origin, $parts, $parent);
                 case ValueArray::class:
-                    return $this->compareValueArray($origin, $parts);
+                    return $this->compareValueArray($origin, $parts, $parent);
                 case Value::class:
                     return $this->compareValue($origin, $parts);
                 default:
@@ -86,10 +89,14 @@ class Processor
         }
     }
 
-    public function compareDefine(Define $origin, Define $parts) {
-        $val = $this->compare($origin->getValue(), $parts->getValue());
+    public function compareDefine(Define $origin, Define $parts, DefineValue $parent) {
+        $def = new Define();
+        $def->setLinks($parent);
+        $val = $this->compare($origin->getValue(), $parts->getValue(), $def);
         if ($val) {
-            $def = new Define($origin->getKey(), $val);
+
+
+            $def->init($origin->getKey(), $val);
 
             return $def;
         }
@@ -104,6 +111,7 @@ class Processor
      */
     public function compareFiles(File $origin, File $parts) {
         $out = new File($origin->getHeading(), 'compare');
+        $this->file = $out;
 
         return $this->compareDefContent($origin, $parts, $out);
     }
@@ -113,8 +121,9 @@ class Processor
      * @param Section $parts
      * @return Section
      */
-    public function compareSections(Section $origin, Section $parts) {
+    public function compareSections(Section $origin, Section $parts, DefineValue $parent) {
         $out = new Section($origin->getName());
+        $out->setLinks($parent);
 
         return $this->compareDefContent($origin, $parts, $out);
     }
@@ -148,7 +157,7 @@ class Processor
                 if ($partsItem->equal($originItem)) {
                     continue;
                 }
-                $res = $this->compare($originItem, $partsItem);
+                $res = $this->compare($originItem, $partsItem, $container);
                 if ($res) {
                     $container->addItem($res);
                 }
@@ -158,8 +167,9 @@ class Processor
         return $container;
     }
 
-    public function compareDefineStatements(Dictionary $origin, Dictionary $parts) {
+    public function compareDefineStatements(Dictionary $origin, Dictionary $parts, DefineValue $parent) {
         $container = new Dictionary();
+        $container->setLinks($parent);
 
         return $this->compareDefContent($origin, $parts, $container);
     }
@@ -170,7 +180,7 @@ class Processor
      * @return ValueArray
      * @throws Exception
      */
-    public function compareValueArray(ValueArray $origin, ValueArray $parts) {
+    public function compareValueArray(ValueArray $origin, ValueArray $parts, DefineValue $parent) {
         /** @var DefineValue[] $originItems */
         $originItems = [];
         foreach ($origin->getItems() as $item) {
@@ -192,6 +202,7 @@ class Processor
         }
 
         $out = new ValueArray();
+        $out->setLinks($parent);
 
         $newKeys = array_diff(array_keys($originItems), array_keys($partsItems));
         foreach ($newKeys as $key) {

@@ -8,6 +8,7 @@
 
 namespace PbxParser\Command;
 
+use PbxParser\Exception;
 use PbxParser\Service;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,12 +20,19 @@ class Import extends AbstractCommand
         parent::__construct($name);
         $this->setDescription('import project.pbxproj to separate files');
         $this->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'path to pbxproj');
-
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
         $service = new Service();
-        $service->import($input->getOption('path'));
+
+        $path = $input->getOption('path');
+
+        if (!$path) {
+            throw new Exception('path is required');
+        }
+
+        $service->import($path);
+
         return 0;
     }
 }

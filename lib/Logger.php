@@ -176,13 +176,14 @@ class Logger implements LoggerInterface
 
         $out .= "\n";
 
-        if (ini_get('display_errors')) {
+        /*if (ini_get('display_errors')) {
             echo $out . "\n";
-        }
+        }*/
         error_log("[{$level}] " . $out);
+        die();
     }
 
-    public function error_handler(int $errno, string $errstr, string $errfile, int $errline, array $errcontext) {
+    public function error_handler($errno,  $errstr,  $errfile, $errline, array $errcontext = []) {
 
         $errcontext['trace_reduce'] = 3;
         switch ($errno) {

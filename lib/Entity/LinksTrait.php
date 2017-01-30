@@ -8,6 +8,8 @@
 
 namespace PbxParser\Entity;
 
+use PbxParser\Logger;
+
 trait LinksTrait
 {
     /**
@@ -35,11 +37,16 @@ trait LinksTrait
     }
 
     public function initLinks(DefineValue $parent){
-        $this->parent = $parent;
-        $this->file = $parent->getFile();
+        $this->setLinks($parent);
         foreach($this->getChildren() as $child){
             $child->initLinks($this);
         }
+    }
+
+    public function setLinks(DefineValue $parent){
+        $this->parent = $parent;
+        $this->file = $parent->getFile();
+
     }
 
     public function setFile(File $file){

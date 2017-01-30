@@ -8,6 +8,8 @@
 
 namespace PbxParser\Entity;
 
+use PbxParser\Logger;
+
 class Dictionary implements DefineValue
 {
     use LinksTrait;
@@ -16,6 +18,8 @@ class Dictionary implements DefineValue
      * @var DictionaryContent[]
      */
     private $items = [];
+
+
 
     /**
      * @param DictionaryContent $item
@@ -27,7 +31,7 @@ class Dictionary implements DefineValue
     /**
      * @return DictionaryContent[]
      */
-    public function getItems(){
+    public function getItems() {
         return $this->items;
     }
 
@@ -55,9 +59,10 @@ class Dictionary implements DefineValue
         return $this->getParent()->getPath() . " {";
     }
 
-    public function getKeys(){
+    public function getKeys() {
         $keys = array_keys($this->items);
         asort($keys);
+
         return $keys;
     }
 
@@ -71,19 +76,20 @@ class Dictionary implements DefineValue
             return false;
         }
 
-        if(count($this->items) != count($val->getItems())){
+        if (count($this->items) != count($val->getItems())) {
             return false;
         }
 
-        if($val->getKeys() != $this->getKeys()){
+        if ($val->getKeys() != $this->getKeys()) {
             return false;
         }
 
-        foreach($this->items as $key => $item){
-            if(!$item->equal($val->getByKey($key))){
+        foreach ($this->items as $key => $item) {
+            if (!$item->equal($val->getByKey($key))) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -94,7 +100,10 @@ class Dictionary implements DefineValue
         return $this->items;
     }
 
-    public function _clone(){
+    /**
+     * @return Dictionary
+     */
+    public function _clone() {
         return $this->cloneLinks(new Dictionary());
     }
 }

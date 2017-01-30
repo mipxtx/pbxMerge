@@ -68,13 +68,15 @@ class MergeService
      * @return Define
      */
     private function mergeDefines(array $objects) {
-        $base = $objects[0];
+        $base = $objects[0]->_clone();
         $objs = [];
         foreach ($objects as $obj) {
             $objs[] = $obj->getValue();
         }
+        $merge = $this->merge($objs);
+        $base->init($objects[0]->getKey(), $merge);
 
-        return $base->_clone($this->merge($objs));
+        return $base;
     }
 
     /**
@@ -91,7 +93,12 @@ class MergeService
         }
 
         foreach ($children as $key => $pack) {
-            $out->addItem($this->merge($pack));
+            $merge = $this->merge($pack);
+            if($merge instanceof Value){
+
+                echo get_class($pack[0]) . "\n";
+            }
+            $out->addItem($merge);
         }
 
         return $out;

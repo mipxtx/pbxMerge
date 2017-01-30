@@ -8,6 +8,7 @@
 
 namespace PbxParser\Entity;
 
+use PbxParser\Logger;
 use PbxParser\LoggerElement;
 
 class Define implements DefineValue, DictionaryContent, LoggerElement
@@ -24,13 +25,8 @@ class Define implements DefineValue, DictionaryContent, LoggerElement
      */
     private $value;
 
-    /**
-     * Define constructor.
-     *
-     * @param Value $key
-     * @param DefineValue $value
-     */
-    public function __construct(Value $key, DefineValue $value) {
+
+    public function init(Value $key, DefineValue $value) {
         $this->key = $key;
         $this->value = $value;
     }
@@ -38,18 +34,24 @@ class Define implements DefineValue, DictionaryContent, LoggerElement
     /**
      * @return Value
      */
-    public function getKey(){
+    public function getKey() {
         return $this->key;
     }
 
     /**
      * @return DefineValue
      */
-    public function getValue(){
+    public function getValue() {
         return $this->value;
     }
 
     public function getName() {
+        if (!$this->key) {
+            print_r($this);
+
+            error_log((new Logger())->buildTrace(debug_backtrace()));
+        }
+
         return $this->getKey()->getValue();
     }
 
@@ -66,6 +68,7 @@ class Define implements DefineValue, DictionaryContent, LoggerElement
             $val instanceof Define
             && $this->getKey()->equal($val->getKey())
             && $this->getValue()->equal($val->getValue());
+
         return $res;
     }
 
@@ -79,11 +82,18 @@ class Define implements DefineValue, DictionaryContent, LoggerElement
         ];
     }
 
-    public function _clone(DefineValue $value){
-        return $this->cloneLinks(new Define($this->getKey(), $value));
+    /**
+     * @return Define
+     */
+    public function _clone() {
+        return $this->cloneLinks(new Define());
     }
 
     public function getLoggerId() {
+        if (!$this->getKey()) {
+            return '';
+        }
+
         return $this->getKey()->getValue();
     }
 }
